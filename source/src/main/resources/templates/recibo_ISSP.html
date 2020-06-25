@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+	    <meta charset="ISO-8859-1"/>
+	    <meta charset="utf-8"/>
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+	    <meta name="description" content=""/>
+	    <meta name="author" content="Bootstrap contributors"/>
+	    <meta name="generator" content="Jekyll v3.8.5"/>
+	    <title>Recibo de Sueldo</title>
+	    <link rel="stylesheet" href="style.css" media="screen"/>
+	</head>
+	
+	<table align="center" class="table-top-1" >
+		<thead>
+    		<tr>
+    		   	<th colspan="7" align="center" height="60" ><img src="encabezado_ISSP.gif" alt="Logo ISSP" width="635" height="37" /></th>
+      		</tr>
+  		</thead>
+
+	 	<tbody>
+    		<tr class="column-header" >
+      			<th width="100px" >N&#250;mero</th>
+      			<th width="50px" >Jurisd.</th>
+      			<th width="70px" >U. Organ.</th>
+      			<th width="100px" >Cargo/Nivel Escalafonario</th>
+   				<th width="114px" >Puesto</th>
+   				<th width="60px" >Ficha</th>
+   				<th>F. Ingreso<br/>al Cargo</th>
+    		</tr>
+    
+    		<tr class="column-content" >
+      			<td><label th:utext="${numero}"/></td>
+      			<td><label th:utext="${jurisdiccion}"/></td>
+      			<td><label th:utext="${unidad}"/></td>
+      			<td><label th:utext="${cargo}"/></td>
+      			<td><label th:utext="${puesto}"/></td>
+      			<td><label th:utext="${ficha}"/></td>
+      			<td><label th:utext="${fechaIngreso}"/></td>
+    		</tr>
+    	</tbody>
+    </table>
+    
+    <table align="center" class="table-top-2" >
+    	<tbody>
+    		<tr class="column-header" >
+      			<th width="100px" >Per. de Pago</th>
+      			<th>Apellido y Nombres</th>
+      			<th>Cuil</th>
+    		</tr>
+    
+    		<tr class="column-content" >
+      			<td><label th:utext="${periodoMes}"/> <label th:utext="${periodoAnio}"/></td>
+      			<td><label th:utext="${apellidoNombre}"/></td>
+      			<td><label th:utext="${cuit}"/></td>
+      			</tr>
+    	</tbody>
+    </table>
+    
+   	<table align="center" >
+    	<tbody>
+       		<tr class="column-header detail-header" >
+      			<th width="28%" >Haberes</th>
+      			<th width="11%" >Importe</th>
+      			<th width="11%" >Ajuste</th>
+      			<th width="28%" >Descuentos</th>
+   				<th width="11%" >Importe</th>
+   				<th width="11%" >Ajustes</th>
+    		</tr>
+    		
+      		<tr>
+      			<td width="28%" rowspan="1" class="detail" >
+					<th:block th:each="haber : ${listaHaberes}">
+						<label th:utext="${haber.concepto}"/><br/>
+					</th:block>
+				</td>
+      			<td width="11%" rowspan="1" class="amount" >
+					<th:block th:each="haber : ${listaHaberes}">
+						<label th:utext="${haber.importe}"/><br/>
+					</th:block>
+				</td>
+      			<td width="11%" rowspan="1" class="amount">
+     				<th:block th:each="haber : ${listaHaberes}">
+						<label th:utext="${haber.ajuste}"/><br/>
+					</th:block>
+      			</td>
+      			
+			    <td width="28%" rowspan="1" class="detail" >
+			    	<th:block th:each="descuento : ${listaDescuentos}">
+						<label th:utext="${descuento.concepto}"/><br/>
+					</th:block>
+			    </td>
+			    <td width="11%" rowspan="1" class="amount" >
+			    	<th:block th:each="descuento : ${listaDescuentos}">
+						<label th:utext="${descuento.importe}"/><br/>
+					</th:block>
+			    </td>
+			    <td width="11%" rowspan="1" class="amount" >
+			    	<th:block th:each="descuento : ${listaDescuentos}">
+						<label th:utext="${descuento.ajuste}"/><br/>
+					</th:block>
+			    </td>
+    		</tr>
+    		
+      		<tr>
+      			<td></td>
+      			<td class="detail-total amount" ><label th:utext="${haberesTotalImporte}"/></td>
+      			<td class="detail-total amount" ><label th:utext="${haberesTotalAjuste}"/></td>
+      			<td></td>
+      			<td class="detail-total amount" ><label th:utext="${descuentoTotalImporte}"/></td>
+     			<td class="detail-total amount" ><label th:utext="${descuentoTotalAjuste}"/></td>
+    		</tr>
+     		
+     		<tr>
+      			<th colspan="5" ></th>
+   				<th class="amount-total" ><label th:utext="${liquidoCobrar}"/> </th>
+    		</tr>
+    	</tbody>
+    </table>
+    
+    <table align="center" class="table-bottom" >
+    	<tbody>
+      		<tr>
+      			<td colspan="3" class="info" ><strong>Obra Social: </strong><label th:utext="${obraSocial}"/></td>
+    		</tr>
+     
+     		<tr>
+      			<td colspan="3" class="info" ><strong>CUIT GCABA: </strong>34-99903208-9</td>
+    		</tr>    
+     
+     		<tr class="column-header" >
+      			<th width="55%" >Sucursal y n&#176; de cuenta</th>
+      			<th width="25%" >Tipo y n&#176; de documento</th>
+      			<th width="20%" >L&#237;quido a cobrar</th>
+    		</tr>
+    
+     		<tr class="column-content" >
+      			<td width="55%" ><label th:utext="${sucursalCuenta}"/></td>
+      			<td width="25%" ><label th:utext="${documento}"/></td>
+      			<td width="20%" class="amount amount-total-footer" ><label th:utext="${liquidoCobrar}"/></td>
+    		</tr>
+    	</tbody>
+    </table>
+    
+	<table align="center" class="table-signature" >
+    	<tbody>
+     		<tr>
+      			<td width="65%" class="amount-letters" ><strong>Son pesos: </strong><label th:utext="${liquidoCobrarLetras}"/></td>
+        		<td rowspan="2" class="signature" ><img src="firma_BOMBEROS.jpg" />
+        			<br/>
+		        	Lic. Anal&#237;a De Feo<br/>
+                	Directora General<br/>
+					<p class="signature-alt-size" >
+						Direcci&#243;n General de Liquidaci&#243;n y<br/>
+						Servicios Complementarios de Seguridad
+					</p>
+				</td>
+    		</tr>
+     
+     		<tr>
+      			<td width="65%" class="info communications" ><strong>Comunicaciones: </strong><label th:utext="${comunicaciones}"/></td>
+    		</tr>
+		</tbody>
+	</table>
+</html>
