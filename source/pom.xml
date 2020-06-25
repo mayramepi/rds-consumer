@@ -39,7 +39,7 @@
     <properties>
         <java.version>1.8</java.version>
         <itext.version>5.5.13.1</itext.version>
-        <model.version>00.00.01-RC3</model.version>
+        <model.version>00.00.01-RC4</model.version>
         <commons.version>00.00.01-RC2</commons.version>
         <logging.version>00.00.01-RC2</logging.version>
     </properties>
