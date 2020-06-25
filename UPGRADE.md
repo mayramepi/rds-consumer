@@ -82,4 +82,7 @@ logging.level.root=info<br>
 </strong>
 </p>
 
-<strong style="color: red">NOTA: Adicionalmente se debe configurar un storage persistente montado en el directorio "/var/rds".</strong>
+<strong style="color: red">
+NOTA: Adicionalmente se debe configurar un storage persistente montado en el directorio "/var/rds". 
+Este storage persistente sera compartido con el microservicio "rds-uploader".
+</strong>
