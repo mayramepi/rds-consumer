@@ -4,7 +4,7 @@
 
     <groupId>ar.gob.recibosdesueldos</groupId>
     <artifactId>consumer</artifactId>
-    <version>00.00.01-RC1</version>
+    <version>00.00.01-RC2-SNAPSHOT</version>
     <name>rds-consumer</name>
     <description>Consumer</description>
 
@@ -40,7 +40,7 @@
         <connection>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</connection>
         <developerConnection>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</developerConnection>
         <url>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</url>
-      <tag>00.00.01-RC1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
