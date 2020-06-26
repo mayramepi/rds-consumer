@@ -8,7 +8,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
@@ -47,7 +46,8 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class HtmlToPdf {
 
 	public void parseoHtmlPdf(TemplateEngine templateEngine, Map<String, Object> variables,
-			ResourceLoader resourceLoader, String htmlTemplateName,String dirTemp,String dirFinal,boolean ponerMarca) {
+			ResourceLoader resourceLoader, String htmlTemplateName, String dirTemp, String dirFinal, boolean ponerMarca,
+			String pathCss, String pathImg) {
 
 		try {
 			Document document = new Document(PageSize.A4);
@@ -70,13 +70,12 @@ public class HtmlToPdf {
 
 	        htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
 	        
-	        
 	        htmlContext.setImageProvider(
 	        		new AbstractImageProvider() {
 	                    @Override
 	                    public Image retrieve(String s) {
 	                        try {
-	                            return Image.getInstance(resourceLoader.getResource("classpath:static/img/" + s).getURL());
+	                        	return Image.getInstance(resourceLoader.getResource("file:" + pathImg + s).getURL());
 	                        } catch (Exception e) {
 	                            return null;
 	                        }
@@ -84,7 +83,7 @@ public class HtmlToPdf {
 
 	        			public String getImageRootPath() {
 	                        try {
-	                            return resourceLoader.getResource("classpath:static/img").getURL().getPath();
+	                            return resourceLoader.getResource("file:" + pathImg).getURL().getPath();
 	                        } catch (IOException e) {
 	                            return null;
 	                        }
@@ -96,7 +95,7 @@ public class HtmlToPdf {
 
 			CSSResolver cssResolver = new StyleAttrCSSResolver();
 			CssFile cssFile = XMLWorkerHelper
-					.getCSS(resourceLoader.getResource("classpath:static/css/style.css").getInputStream());
+					.getCSS(resourceLoader.getResource("file:" + pathCss).getInputStream());
 			cssResolver.addCss(cssFile);
 
 			final Pipeline<?> pipeline = new CssResolverPipeline(cssResolver,
@@ -108,7 +107,7 @@ public class HtmlToPdf {
 
 			document.close();
 			if(ponerMarca) {
-				ponerMarcaAgua(variables, dirTemp, pdfTemporalFile,codigoGrupo,dirFinal);
+				ponerMarcaAgua(variables, dirTemp, pdfTemporalFile, codigoGrupo, dirFinal, pathImg);
 			}else {
 				Files.move(Paths.get(pdfTemporalFile.toURI()), Paths.get(dirFinal + variables.get("pdfName") + ".pdf"));
 			}
@@ -121,7 +120,8 @@ public class HtmlToPdf {
 
 	}
 
-	private void ponerMarcaAgua(Map<String, Object> variables, String dirTemp, File pdfTemporalFile,String codigoGrupo, String dirFinal)
+	private void ponerMarcaAgua(Map<String, Object> variables, String dirTemp, File pdfTemporalFile,String codigoGrupo, String dirFinal,
+			String pathImg)
 			throws IOException, DocumentException, FileNotFoundException, BadElementException, MalformedURLException {
 
 		
@@ -132,7 +132,7 @@ public class HtmlToPdf {
 		String pdfFinalPath = dirFinal +(String) variables.get("pdfName") + ".pdf";
 		PdfStamper pdfStamper = new PdfStamper(reader,new FileOutputStream(pdfFinalPath));
 		String htmlTemplateName = "marca_agua_" + codigoGrupo;
-		Image watermark_image = Image.getInstance(ResourceUtils.getURL("classpath:static/img/" + htmlTemplateName +".gif"));
+		Image watermark_image = Image.getInstance(ResourceUtils.getURL("file:" + pathImg + htmlTemplateName +".gif"));
 		int i = 0;
 		watermark_image.setAbsolutePosition(210, 385);
 		watermark_image.scaleToFit(450, 230);
