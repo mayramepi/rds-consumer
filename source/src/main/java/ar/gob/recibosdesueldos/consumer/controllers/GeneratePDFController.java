@@ -44,7 +44,13 @@ public class GeneratePDFController {
     @PostMapping(value = "/generateTemplate/{codGrupo}")
     @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity<?> generateTemplate(@PathVariable String codGrupo) throws Exception {
-		this.generatePDF.generateTemplate(codGrupo.toUpperCase());
+		this.generatePDF.generateTemplate(
+				codGrupo.toUpperCase(),
+				"template.html",
+				"header.gif",
+				"signature.jpg",
+				"watermark.gif"
+		);
 		
 		return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -316,63 +316,78 @@ public class GeneratePDF {
      	return detalle;
     }
 
-    public void generateTemplate(String codGrupo) throws IOException, DocumentException {
-    	String htmlTemplateName = "recibo_" + codGrupo + ".html";
-    	String headerName = "encabezado_" + codGrupo + ".gif";
-    	String signatureName = "firma_" + codGrupo + ".jpg";
-    	String watermarkName = "marca_agua_" + codGrupo + ".gif";
+    public void generateTemplate(
+    		String codGrupo,
+    		String htmlTemplateName,
+    		String headerName,
+    		String signatureName,
+    		String watermarkName
+    		) throws IOException, DocumentException {
+    	createResourceSubDir(codGrupo);
         
     	File fileTemplate = new File(pathPreview + htmlTemplateName);
     	File fileHeader = new File(pathPreview + headerName);
     	File fileSignature = new File(pathPreview + signatureName);
-    	File fileWatermark = new File(pathPreview + watermarkName);
     	
-    	if (fileTemplate.exists() && fileTemplate.renameTo(new File(pathTemplates + htmlTemplateName))) {
+    	if (fileTemplate.exists() && renameResourceFile(fileTemplate, codGrupo, "template")) {
     		fileTemplate.delete();
         } else {
         	System.out.println("Ocurrió un error al mover el Template al directorio final.");
         }
     	
-    	if (fileHeader.exists() && fileHeader.renameTo(new File(pathImg + headerName))) {
+    	if (fileHeader.exists() && renameResourceFile(fileHeader, codGrupo, "header")) {
     		fileHeader.delete();
         } else {
         	System.out.println("Ocurrió un error al mover el Encabezado al directorio final.");
         }
     	
-    	if (fileSignature.exists() && fileSignature.renameTo(new File(pathImg + signatureName))) {
+    	if (fileSignature.exists() && renameResourceFile(fileSignature, codGrupo, "signature")) {
     		fileSignature.delete();
         } else {
         	System.out.println("Ocurrió un error al mover la Firma al directorio final.");
         }
     	
-    	if (fileWatermark.exists() && fileWatermark.renameTo(new File(pathImg + watermarkName))) {
-    		fileWatermark.delete();
-        } else {
-        	System.out.println("Ocurrió un error al mover la Marca de Agua al directorio final.");
-        }
+    	if (watermarkName != null) {
+    		File fileWatermark = new File(pathPreview + watermarkName);
+    		
+    		if (fileWatermark.exists() && renameResourceFile(fileWatermark, codGrupo, "watermark")) {
+        		fileWatermark.delete();
+            } else {
+            	System.out.println("Ocurrió un error al mover la Marca de Agua al directorio final.");
+            }
+    	}
     }
     
-    public void renameResourceFile(File file, String typeResource, String codGrupo) {
+    public boolean renameResourceFile(File file, String codGrupo, String typeResource) {
     	String fileExtension = "_" + codGrupo + "." + FilenameUtils.getExtension(file.getAbsolutePath());
     	
     	if (file.exists()) {
     		if (typeResource.equalsIgnoreCase("template")) {
-        		file.renameTo(new File(pathPreview + "recibo" + fileExtension));
-        	
-        	} else if (typeResource.equalsIgnoreCase("header")) {
-        		file.renameTo(new File(pathPreview + "encabezado" + fileExtension));
-        	
-    	    } else if (typeResource.equalsIgnoreCase("signature")) {
-    			file.renameTo(new File(pathPreview + "firma" + fileExtension));
+        		file.renameTo(new File(pathTemplates + "recibo" + fileExtension));
+        		
+    		} else if (typeResource.equalsIgnoreCase("header") || typeResource.equalsIgnoreCase("signature")) {
+    			file.renameTo(new File(pathImg + codGrupo + "\\" + file.getName()));
     			
     	    } else if (typeResource.equalsIgnoreCase("watermark")) {
-    			file.renameTo(new File(pathPreview + "marca_agua" + fileExtension));
+    			file.renameTo(new File(pathImg + codGrupo + "\\" + "marca_agua" + fileExtension));
     		}
     		
     		file.delete();
+    		return true;
     		
     	} else {
     		System.out.println("El archivo especificado no existe.");
+    		return false;
+    	}
+    }
+    
+    public void createResourceSubDir(String codGrupo) {
+    	File imgDir = new File(pathImg + codGrupo);
+    	
+    	if (!imgDir.exists()) {
+    		imgDir.mkdirs();
+    	} else {
+    		System.out.println("El directorio ya existe.");
     	}
     }
 }
