@@ -69,6 +69,11 @@ spring.artemis.password=admin<br>
 
 app.out_dir=/var/rds/<br>
 app.out_dir_temp=/tmp<br>
+app.preview_dir=/tmp<br>
+
+resources.css=/var/rds-templates/css/style.css<br>
+resources.img=/var/rds-templates/img/<br>
+resources.templates=/var/rds-templates/templates/<br>
 
 app.marca.agua.gcba=true<br>
 app.marca.agua.ivc=true<br>
@@ -82,7 +87,13 @@ logging.level.root=info<br>
 </strong>
 </p>
 
+<br>
 <strong style="color: red">
-NOTA: Adicionalmente se debe configurar un storage persistente montado en el directorio "/var/rds". 
+NOTA 1: Configurar un storage persistente montado en el directorio "/var/rds". 
 Este storage persistente sera compartido con el microservicio "rds-uploader".
+</strong>
+<br>
+<strong style="color: red">
+NOTA 2: Configurar un storage persistente montado en el directorio "/var/rds-templates". 
+Copiar el todo contenido del directorio "templates/plantillas" en el directorio "/var/rds-templates"
 </strong>
