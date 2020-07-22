@@ -44,9 +44,7 @@ public class GeneratePDFController {
 
 	@Autowired
     private GeneratePDF generatePDF;
-    @Autowired
-    @Qualifier("grupoService")
-    private GrupoService grupoService;
+
 
 	@Value("${app.out_dir}")
     private String pathPdf;
@@ -82,9 +80,6 @@ public class GeneratePDFController {
                                               @RequestParam("header") MultipartFile header,
                                               @RequestParam("signature") MultipartFile signature,
                                               @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
-        if(!grupoService.existeByCodGrupo(codigoGrupo)) {
-            throw new CustomException("No exite el grupo:'"+codigoGrupo+"'",HttpStatus.BAD_REQUEST);
-        }
 		this.generatePDF.generateTemplate(
                 codigoGrupo.toUpperCase(),
                 template,
@@ -107,9 +102,7 @@ public class GeneratePDFController {
 
 
 
-        if(!grupoService.existeByCodGrupo(codigoGrupo)) {
-            throw new CustomException("No exite el grupo:'"+codigoGrupo+"'",HttpStatus.BAD_REQUEST);
-        }
+
         try {
             generatePDF.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
         } catch (IOException e) {
@@ -117,11 +110,13 @@ public class GeneratePDFController {
         }
     	this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp\\", cssDir);
 
-        String filePath = previewDir+"x-xx-xx_0null_0.pdf";
+        String filePath = previewDir+"/x-xx-xx_0null_0.pdf";
 
         byte[] bFile = Files.readAllBytes(Paths.get(filePath));
+        generatePDF.borraTempTemplatesFiles(codigoGrupo);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=" + "x-xx-xx_0null_0.pdf");
+        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
 
         return (ResponseEntity<byte[]>) ResponseEntity
                     .ok()

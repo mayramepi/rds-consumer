@@ -50,6 +50,9 @@ public class HtmlToPdf {
 			String pathCss, String pathImg) {
 
 		try {
+			dirTemp=dirTemp+"/";
+			dirFinal=dirFinal+"/";
+
 			Document document = new Document(PageSize.A4);
 			File pdfTemporalFile;
 			pdfTemporalFile = this.createTempFile((String) variables.get("pdfName"), "temp.pdf", dirTemp);

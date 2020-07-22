@@ -8,12 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import ar.gob.recibosdesueldos.commons.exception.CustomException;
+import ar.gob.recibosdesueldos.commons.service.GrupoService;
 import ar.gob.recibosdesueldos.commons.utils.RdsUtils;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,6 +19,7 @@ import org.apache.commons.lang3.RandomUtils;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
@@ -53,8 +52,12 @@ public class GeneratePDF {
 
 	@Value("${resources.templates}")
 	private String pathTemplates;
+	@Value("${app.preview_dir}")
+	private String previewDir;
 
-
+	@Autowired
+	@Qualifier("grupoService")
+	private GrupoService grupoService;
 
 //	@Value("${resources.templates}")
 //	private String templatesDir;
@@ -92,8 +95,6 @@ public class GeneratePDF {
 
     public void createPDF(PlantillaPDF plantillaPDF,String dirTemp,String dirFinal) throws IOException, DocumentException {
         Map<String, Object> variables = new HashMap<>();
-		dirTemp=dirTemp+"/";
-		dirFinal=dirFinal+"/";
         String codigoGrupo = plantillaPDF.getRecibo().getCodigoGrupo();
 		String htmlTemplateName = "recibo_" + codigoGrupo;
         DecimalFormat df = new DecimalFormat("#0.00");
@@ -345,151 +346,65 @@ public class GeneratePDF {
 									MultipartFile template,
 									MultipartFile header,
 									MultipartFile signature,
-									MultipartFile watermark) throws IOException {
+									MultipartFile watermark) throws IOException, CustomException {
 
-		File imDir = new File(pathImg + grupo.toUpperCase());
-		if (!imDir.exists()) {
-			imDir.mkdirs();
-		}
-		final Path rootTemplate = Paths.get(pathTemplates );
-		final Path rootImg = Paths.get(pathImg + grupo.toUpperCase());
-		List<String> fileNames = new ArrayList<>();
-
-		Files.copy(template.getInputStream(), rootTemplate.resolve("recibo_"+grupo.toUpperCase()+".html"),REPLACE_EXISTING);
-		fileNames.add(template.getOriginalFilename());
-		Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()),REPLACE_EXISTING);
-		fileNames.add(header.getOriginalFilename());
-		Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()),REPLACE_EXISTING);
-		fileNames.add(signature.getOriginalFilename());
-		Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())),REPLACE_EXISTING);
-		fileNames.add(watermark.getOriginalFilename());
-
-
+		uploadFilesTemplate( grupo,pathImg,pathTemplates,"",template,header,signature,watermark);
 	}
 
-//    public void generateTemplate(
-//    		String codGrupo,
-//    		String htmlTemplateName,
-//    		String headerName,
-//    		String signatureName,
-//    		String watermarkName
-//    		) throws IOException, DocumentException {
-//    	createResourceSubDir(codGrupo);
-//
-//    	File fileTemplate = new File(pathPreview + htmlTemplateName);
-//    	File fileHeader = new File(pathPreview + headerName);
-//    	File fileSignature = new File(pathPreview + signatureName);
-//
-//    	if (fileTemplate.exists() && renameResourceFile(fileTemplate, codGrupo, "template")) {
-//    		fileTemplate.delete();
-//        } else {
-//        	System.out.println("Ocurrió un error al mover el Template al directorio final.");
-//        }
-//
-//    	if (fileHeader.exists() && renameResourceFile(fileHeader, codGrupo, "header")) {
-//    		fileHeader.delete();
-//        } else {
-//        	System.out.println("Ocurrió un error al mover el Encabezado al directorio final.");
-//        }
-//
-//    	if (fileSignature.exists() && renameResourceFile(fileSignature, codGrupo, "signature")) {
-//    		fileSignature.delete();
-//        } else {
-//        	System.out.println("Ocurrió un error al mover la Firma al directorio final.");
-//        }
-//
-//    	if (watermarkName != null) {
-//    		File fileWatermark = new File(pathPreview + watermarkName);
-//
-//    		if (fileWatermark.exists() && renameResourceFile(fileWatermark, codGrupo, "watermark")) {
-//        		fileWatermark.delete();
-//            } else {
-//            	System.out.println("Ocurrió un error al mover la Marca de Agua al directorio final.");
-//            }
-//    	}
-//    }
-//
-//    public boolean renameResourceFile(File file, String codGrupo, String typeResource) {
-//    	String fileExtension = "_" + codGrupo + "." + FilenameUtils.getExtension(file.getAbsolutePath());
-//
-//    	if (file.exists()) {
-//    		if (typeResource.equalsIgnoreCase("template")) {
-//        		file.renameTo(new File(pathTemplates + "recibo" + fileExtension));
-//
-//    		} else if (typeResource.equalsIgnoreCase("header") || typeResource.equalsIgnoreCase("signature")) {
-//    			file.renameTo(new File(pathImg + codGrupo + "\\" + file.getName()));
-//
-//    	    } else if (typeResource.equalsIgnoreCase("watermark")) {
-//    			file.renameTo(new File(pathImg + codGrupo + "\\" + "marca_agua" + fileExtension));
-//    		}
-//
-//    		file.delete();
-//    		return true;
-//
-//    	} else {
-//    		System.out.println("El archivo especificado no existe.");
-//    		return false;
-//    	}
-//    }
-//
-//    public void createResourceSubDir(String codGrupo) {
-//    	File imgDir = new File(pathImg + codGrupo);
-//
-//    	if (!imgDir.exists()) {
-//    		imgDir.mkdirs();
-//    	} else {
-//    		System.out.println("El directorio ya existe.");
-//    	}
-//    }
-public void uploadFilesTemplate(String grupo,
-									MultipartFile template,
-									MultipartFile header,
-									MultipartFile signature,
-									MultipartFile watermark) throws IOException {
-
-	File imDir = new File(pathImg + grupo.toUpperCase());
-	if (!imDir.exists()) {
-		imDir.mkdirs();
-	}
-	final Path rootTemplate = Paths.get(pathTemplates );
-	final Path rootImg = Paths.get(pathImg + grupo.toUpperCase());
-	List<String> fileNames = new ArrayList<>();
-
-	Files.copy(template.getInputStream(), rootTemplate.resolve("_recibo_"+grupo.toUpperCase()+".html"));
-	fileNames.add(template.getOriginalFilename());
-	Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()));
-	fileNames.add(header.getOriginalFilename());
-	Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()));
-	fileNames.add(signature.getOriginalFilename());
-	Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())));
-	fileNames.add(watermark.getOriginalFilename());
-
-
-}
     public void uploadTempFilesTemplate(String grupo,
 										MultipartFile template,
 										MultipartFile header,
 										MultipartFile signature,
-										MultipartFile watermark) throws IOException {
+										MultipartFile watermark) throws IOException, CustomException {
 
 			File imDir = new File(pathImg + "tmp");
 			if (!imDir.exists()) {
 				imDir.mkdirs();
 			}
-			final Path rootTemplate = Paths.get(pathTemplates );
-			final Path rootImg = Paths.get(pathImg + "tmp");
-			List<String> fileNames = new ArrayList<>();
-
-				Files.copy(template.getInputStream(), rootTemplate.resolve("_recibo_"+grupo.toUpperCase()+".html"));
-				fileNames.add(template.getOriginalFilename());
-				Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()));
-				fileNames.add(header.getOriginalFilename());
-				Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()));
-				fileNames.add(signature.getOriginalFilename());
-				Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())));
-				fileNames.add(watermark.getOriginalFilename());
-
-
+			uploadFilesTemplate( grupo,pathImg + "tmp",pathTemplates,"_",template,header,signature,watermark);
 		}
+	public void uploadFilesTemplate(String grupo,
+										String pathImg,
+										String pathTemplates,
+										String prefijoTemplate,
+										MultipartFile template,
+										MultipartFile header,
+										MultipartFile signature,
+										MultipartFile watermark) throws IOException, CustomException {
+		if(!grupoService.existeByCodGrupo(grupo)) {
+			throw new CustomException("No exite el grupo:'"+grupo+"'",HttpStatus.BAD_REQUEST);
+		}
+		final Path rootTemplate = Paths.get(pathTemplates );
+		final Path rootImg = Paths.get(pathImg);
+		if(template!=null && !template.isEmpty())
+			Files.copy(template.getInputStream(), rootTemplate.resolve(prefijoTemplate+"recibo_"+grupo.toUpperCase()+".html"),REPLACE_EXISTING);
+		if(header!=null && !header.isEmpty())
+			Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()),REPLACE_EXISTING);
+		if(signature!=null && !signature.isEmpty())
+			Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()),REPLACE_EXISTING);
+		if(watermark!=null && !watermark.isEmpty())
+			Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())),REPLACE_EXISTING);
 
+	}
+
+	public void borraTempTemplatesFiles(String grupo) throws IOException{
+		final Path TEMP_DIRECTORY = Paths.get(pathImg );
+
+		Path pathToBeDeleted = TEMP_DIRECTORY.resolve("tmp");
+
+		Files.walk(pathToBeDeleted)
+				.sorted(Comparator.reverseOrder())
+				.map(Path::toFile)
+				.forEach(File::delete);
+
+		File templateTempFile = new File(pathTemplates+"\\_recibo_"+grupo.toUpperCase()+".html");
+		if (templateTempFile.exists()) {
+			templateTempFile.delete();
+		}
+		String filePath = previewDir+"/x-xx-xx_0null_0.pdf";
+		File prevPDF = new File(filePath);
+		if (prevPDF.exists()) {
+			prevPDF.delete();
+		}
+	}
 }
