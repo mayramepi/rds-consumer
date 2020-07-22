@@ -2,16 +2,18 @@
 declare -x JAVA_JAR=`find ./target -name *.jar`
 declare -x JAVA_BIN=java
 declare -x DATABASE_NUMBER=2
-echo "Iniciando java con datasource:"
-echo "USERNAME "$DB_USERNAME
-echo "PASSWORD" $DB_PASSWORD
-echo "URL" "jdbc:oracle:thin:@"$DB_HOST:$DB_PORT/$DB_SERVICE_NAME
-echo "iniciando...."
+
 declare -x DB_USERNAME="CONFIG_USER"
 declare -x DB_PASSWORD="CONFIG_PASS"
 declare -x DB_HOST="CONFIG_HOST"
 declare -x DB_SERVICE_NAME="CONFIG_SERVICE_NAME"
 declare -x DB_PORT="CONFIG_PORT"
+echo "Iniciando java con datasource:"
+echo "USERNAME "$DB_USERNAME
+echo "PASSWORD" $DB_PASSWORD
+echo "URL" "jdbc:oracle:thin:@"$DB_HOST:$DB_PORT/$DB_SERVICE_NAME
+echo "iniciando...."
+
 declare -x FLYWAY=false
 declare -x MIGRATE=false
 declare -x JAVA_PORT="8085"
