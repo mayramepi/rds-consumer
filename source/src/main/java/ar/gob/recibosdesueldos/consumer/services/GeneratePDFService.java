@@ -10,7 +10,7 @@ public class GeneratePDFService {
 
     public PlantillaPDF generate(Recibo recibo) {
     	PlantillaPDF plantillaPDF = new PlantillaPDF();
-    	
+
         plantillaPDF.setPlantillaNombre("name");
         plantillaPDF.setHtmlEncabezado("header");
         plantillaPDF.setHtmlPieDePagina("footer");
@@ -18,5 +18,5 @@ public class GeneratePDFService {
 
         return plantillaPDF;
     }
-    
+
 }

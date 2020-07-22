@@ -11,15 +11,15 @@
 	    <title>Recibo de Sueldo</title>
 	    <link rel="stylesheet" href="style.css" media="screen"/>
 	</head>
-
+	
 	<table align="center" class="table-top-1" >
 		<thead>
     		<tr>
-      			<th colspan="7" align="center" height="60" ><img src="enca.gif" alt="Logo GCBA" width="635" height="37" /></th>
-    		</tr>
+    		   	<th colspan="7" align="center" height="60" ><img src="encabezado_ISSP.gif" alt="Logo ISSP" width="635" height="37" /></th>
+      		</tr>
   		</thead>
-  
-  		<tbody>
+
+	 	<tbody>
     		<tr class="column-header" >
       			<th width="100px" >N&#250;mero</th>
       			<th width="50px" >Jurisd.</th>
@@ -41,28 +41,24 @@
     		</tr>
     	</tbody>
     </table>
-           
+    
     <table align="center" class="table-top-2" >
     	<tbody>
     		<tr class="column-header" >
       			<th width="100px" >Per. de Pago</th>
-      			<th width="204px" >Apellido y Nombres</th>
-      			<th width="150px" >Cuil</th>
-      			<th width="60px" >N&#176; Comp.</th>
-   				<th>Antig&#252;edad</th>
+      			<th>Apellido y Nombres</th>
+      			<th>Cuil</th>
     		</tr>
-           
+    
     		<tr class="column-content" >
       			<td><label th:utext="${periodoMes}"/> <label th:utext="${periodoAnio}"/></td>
       			<td><label th:utext="${apellidoNombre}"/></td>
       			<td><label th:utext="${cuit}"/></td>
-      			<td><label th:utext="${numeroComprobante}"/></td>
-      			<td><label th:utext="${antiguedad}"/></td>
-    		</tr>
+      			</tr>
     	</tbody>
     </table>
-       
-    <table align="center" >
+    
+   	<table align="center" >
     	<tbody>
        		<tr class="column-header detail-header" >
       			<th width="28%" >Haberes</th>
@@ -106,8 +102,8 @@
 					</th:block>
 			    </td>
     		</tr>
-     
-       		<tr>
+    		
+      		<tr>
       			<td></td>
       			<td class="detail-total amount" ><label th:utext="${haberesTotalImporte}"/></td>
       			<td class="detail-total amount" ><label th:utext="${haberesTotalAjuste}"/></td>
@@ -115,14 +111,14 @@
       			<td class="detail-total amount" ><label th:utext="${descuentoTotalImporte}"/></td>
      			<td class="detail-total amount" ><label th:utext="${descuentoTotalAjuste}"/></td>
     		</tr>
-     
+     		
      		<tr>
       			<th colspan="5" ></th>
    				<th class="amount-total" ><label th:utext="${liquidoCobrar}"/> </th>
     		</tr>
     	</tbody>
     </table>
-     
+    
     <table align="center" class="table-bottom" >
     	<tbody>
       		<tr>
@@ -131,8 +127,8 @@
      
      		<tr>
       			<td colspan="3" class="info" ><strong>CUIT GCABA: </strong>34-99903208-9</td>
-    		</tr>
-    
+    		</tr>    
+     
      		<tr class="column-header" >
       			<th width="55%" >Sucursal y n&#176; de cuenta</th>
       			<th width="25%" >Tipo y n&#176; de documento</th>
@@ -147,18 +143,17 @@
     	</tbody>
     </table>
     
-    <table align="center" class="table-signature" >
+	<table align="center" class="table-signature" >
     	<tbody>
      		<tr>
       			<td width="65%" class="amount-letters" ><strong>Son pesos: </strong><label th:utext="${liquidoCobrarLetras}"/></td>
-        		<td rowspan="2" class="signature" ><img src="firm.jpg" />
+        		<td rowspan="2" class="signature" ><img src="firma_BOMBEROS.jpg" />
         			<br/>
-					Julia Domeniconi<br/>
-					SUBSECRETARIA<br/>
+		        	Lic. Anal&#237;a De Feo<br/>
+                	Directora General<br/>
 					<p class="signature-alt-size" >
-						Subsecretaria de Gesti&#243;n de Recursos Humanos<br/>
-						MINISTERIO DE ECONOM&#205;A Y FINANZAS<br/>
-						Firma de GCABA
+						Direcci&#243;n General de Liquidaci&#243;n y<br/>
+						Servicios Complementarios de Seguridad
 					</p>
 				</td>
     		</tr>

@@ -63,13 +63,12 @@ public class HtmlToPdf {
 			IContext context = new Context(Locale.getDefault(), variables);
 			StringWriter out = new StringWriter();
 			templateEngine.process(htmlTemplateName, context, out);
-
 			out.flush();
-			
+
 		    final HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 
 	        htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
-	        
+
 	        htmlContext.setImageProvider(
 	        		new AbstractImageProvider() {
 	                    @Override
@@ -91,7 +90,7 @@ public class HtmlToPdf {
 	        		}
 	        );
 
-	
+
 
 			CSSResolver cssResolver = new StyleAttrCSSResolver();
 			CssFile cssFile = XMLWorkerHelper
@@ -111,7 +110,7 @@ public class HtmlToPdf {
 			}else {
 				Files.move(Paths.get(pdfTemporalFile.toURI()), Paths.get(dirFinal + variables.get("pdfName") + ".pdf"));
 			}
-		
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (DocumentException e1) {

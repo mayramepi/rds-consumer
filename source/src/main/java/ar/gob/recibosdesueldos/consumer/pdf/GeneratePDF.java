@@ -3,6 +3,9 @@ package ar.gob.recibosdesueldos.consumer.pdf;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,11 +23,15 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 
 import com.itextpdf.text.DocumentException;
+import static java.nio.file.StandardCopyOption.*;
 
 import ar.gob.recibosdesueldos.model.messaging.DetalleRecibo;
 import ar.gob.recibosdesueldos.model.messaging.DetalleReciboForHtml;
@@ -34,19 +41,35 @@ import ar.gob.recibossueldos.consumer.constant.Constantes;
 @Component
 @Service
 public class GeneratePDF {
-	
+
 	@Value("${app.preview_dir}")
     private String pathPreview;
-	
+
 	@Value("${resources.css}")
 	private String pathCss;
-	
+
 	@Value("${resources.img}")
 	private String pathImg;
-	
+
 	@Value("${resources.templates}")
 	private String pathTemplates;
-	
+
+
+
+//	@Value("${resources.templates}")
+//	private String templatesDir;
+
+//	@Value("${resources.img}")
+//	private String imgDir;
+
+//	@Value("${resources.css}")
+//	private String cssDir;
+
+	@Value("${app.out_dir_temp}")
+	private String tempDir;
+
+
+
 	@Value("${app.marca.agua.gcba}")
 	private boolean marcaGcba;
 	@Value("${app.marca.agua.ivc}")
@@ -59,22 +82,23 @@ public class GeneratePDF {
 	private boolean marcaIssp;
 	@Autowired
     private TemplateEngine templateEngine;
-	
+
     @Autowired
     ResourceLoader resourceLoader;
 
     private boolean ponerMarca = false;
-    
+
     private static SimpleDateFormat fileDateFormatNumRef = new SimpleDateFormat("dd/MM/yyyy");
- 
+
     public void createPDF(PlantillaPDF plantillaPDF,String dirTemp,String dirFinal) throws IOException, DocumentException {
         Map<String, Object> variables = new HashMap<>();
-        
+		dirTemp=dirTemp+"/";
+		dirFinal=dirFinal+"/";
         String codigoGrupo = plantillaPDF.getRecibo().getCodigoGrupo();
 		String htmlTemplateName = "recibo_" + codigoGrupo;
         DecimalFormat df = new DecimalFormat("#0.00");
-        
-        
+
+
         // Seteo de variables de Recibo
         variables.put("idRecibo", plantillaPDF.getRecibo().getIdRecibo());
         variables.put("idlote", plantillaPDF.getRecibo().getIdLote());
@@ -104,10 +128,10 @@ public class GeneratePDF {
         variables.put("comunicaciones", plantillaPDF.getRecibo().getComunicaciones());
         variables.put("detalles", plantillaPDF.getRecibo().getDetalles());
         variables.put("liquidoCobrarLetras", plantillaPDF.getRecibo().getLiquidoAcobrarLetras());
-        
+
         List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
         List<DetalleReciboForHtml> listaDescuentos = new ArrayList<DetalleReciboForHtml>();
-        
+
         for (DetalleRecibo detalleRecibo : plantillaPDF.getRecibo().getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
         	detalleHtml.setConcepto(detalleRecibo.getConcepto());
@@ -115,7 +139,7 @@ public class GeneratePDF {
         		detalleHtml.setImporte("");
         	}else {
         		detalleHtml.setImporte(df.format(detalleRecibo.getImporte()).replace(",", "."));
-        		
+
         	}
         	if(detalleRecibo.getAjuste().compareTo(BigDecimal.valueOf(0)) == 0) {
         		detalleHtml.setAjuste("");
@@ -129,9 +153,9 @@ public class GeneratePDF {
         	} else if ("DESC".equalsIgnoreCase(detalleRecibo.getTipo())) {
         		listaDescuentos.add(detalleHtml);
         	}
-			
+
 		}
-		
+
         if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
 			ponerMarca=marcaGcba;
 		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
@@ -143,9 +167,9 @@ public class GeneratePDF {
 		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
 			ponerMarca=marcaIssp;
 		}
-        
+
         String cuil = plantillaPDF.getRecibo().getCuit().replace("-", "").trim();
-        
+
         variables.put("listaHaberes", listaHaberes);
         variables.put("listaDescuentos", listaDescuentos);
         variables.put("pdfName",
@@ -157,17 +181,17 @@ public class GeneratePDF {
         );
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
-        
-        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg);
+
+        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"\\");
     }
 
     public void previsualizarPdf(String codigoGrupo,String dirTemp,String dirFinal,String pathImg1,String pathCss1) throws IOException, DocumentException {
     	Map<String, Object> variables = new HashMap<>();
-     	
- 		String htmlTemplateName = "recibo_" + codigoGrupo;
+
+ 		String htmlTemplateName = "_recibo_" + codigoGrupo;
         DecimalFormat df = new DecimalFormat("#0.00");
-         
-         
+
+
         // Seteo de variables de Recibo
         Recibo recibo = this.setRecibo(codigoGrupo);
         variables.put("idRecibo", recibo.getIdRecibo());
@@ -198,10 +222,10 @@ public class GeneratePDF {
         variables.put("comunicaciones", recibo.getComunicaciones());
         variables.put("detalles", recibo.getDetalles());
         variables.put("liquidoCobrarLetras", recibo.getLiquidoAcobrarLetras());
-         
+
         List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
         List<DetalleReciboForHtml> listaDescuentos = new ArrayList<DetalleReciboForHtml>();
-         
+
         for (DetalleRecibo detalleRecibo : recibo.getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
          	detalleHtml.setConcepto(detalleRecibo.getConcepto());
@@ -209,7 +233,7 @@ public class GeneratePDF {
          		detalleHtml.setImporte("");
          	}else {
          		detalleHtml.setImporte(df.format(detalleRecibo.getImporte()).replace(",", "."));
-         		
+
          	}
          	if(detalleRecibo.getAjuste().compareTo(BigDecimal.valueOf(0)) == 0) {
          		detalleHtml.setAjuste("");
@@ -223,9 +247,9 @@ public class GeneratePDF {
          	} else if ("DESC".equalsIgnoreCase(detalleRecibo.getTipo())) {
          		listaDescuentos.add(detalleHtml);
          	}
- 			
+
  		}
- 		
+
         if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
  			ponerMarca=marcaGcba;
  		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
@@ -237,9 +261,9 @@ public class GeneratePDF {
  		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
  			ponerMarca=marcaIssp;
  		}
-         
+
         String cuil = recibo.getCuit().replace("-", "").trim();
-         
+
         variables.put("listaHaberes", listaHaberes);
         variables.put("listaDescuentos", listaDescuentos);
         variables.put("pdfName",
@@ -251,7 +275,7 @@ public class GeneratePDF {
          );
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
-         
+
         pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss1, pathImg1);
      }
 
@@ -265,7 +289,7 @@ public class GeneratePDF {
 	    this.setDetalle(detalle1, Long.valueOf("1"), "ASIG", "haberes1", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("1"));
 	    this.setDetalle(detalle2, Long.valueOf("2"), "ASIG", "haberes2", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("2"));
 	    this.setDetalle(detalle3, Long.valueOf("3"), "ASIG", "haberes3", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("3"));
-	    
+
 	    this.setDetalle(detalle4, Long.valueOf("4"), "DESC", "descuento1", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("4"));
 	    this.setDetalle(detalle5, Long.valueOf("5"), "DESC", "descuento2", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("5"));
 	    this.setDetalle(detalle6, Long.valueOf("6"), "DESC", "descuento3", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("6"));
@@ -301,7 +325,7 @@ public class GeneratePDF {
 	    recibo.setFicha("xxxx");
 	    recibo.setNumeroComprobante("xxxx");
 	    recibo.setAntiguedad("xxxx");
-     
+
      	recibo.setFechaIngreso(new Date());
      	return recibo;
     }
@@ -316,78 +340,156 @@ public class GeneratePDF {
      	return detalle;
     }
 
-    public void generateTemplate(
-    		String codGrupo,
-    		String htmlTemplateName,
-    		String headerName,
-    		String signatureName,
-    		String watermarkName
-    		) throws IOException, DocumentException {
-    	createResourceSubDir(codGrupo);
-        
-    	File fileTemplate = new File(pathPreview + htmlTemplateName);
-    	File fileHeader = new File(pathPreview + headerName);
-    	File fileSignature = new File(pathPreview + signatureName);
-    	
-    	if (fileTemplate.exists() && renameResourceFile(fileTemplate, codGrupo, "template")) {
-    		fileTemplate.delete();
-        } else {
-        	System.out.println("Ocurrió un error al mover el Template al directorio final.");
-        }
-    	
-    	if (fileHeader.exists() && renameResourceFile(fileHeader, codGrupo, "header")) {
-    		fileHeader.delete();
-        } else {
-        	System.out.println("Ocurrió un error al mover el Encabezado al directorio final.");
-        }
-    	
-    	if (fileSignature.exists() && renameResourceFile(fileSignature, codGrupo, "signature")) {
-    		fileSignature.delete();
-        } else {
-        	System.out.println("Ocurrió un error al mover la Firma al directorio final.");
-        }
-    	
-    	if (watermarkName != null) {
-    		File fileWatermark = new File(pathPreview + watermarkName);
-    		
-    		if (fileWatermark.exists() && renameResourceFile(fileWatermark, codGrupo, "watermark")) {
-        		fileWatermark.delete();
-            } else {
-            	System.out.println("Ocurrió un error al mover la Marca de Agua al directorio final.");
-            }
-    	}
-    }
-    
-    public boolean renameResourceFile(File file, String codGrupo, String typeResource) {
-    	String fileExtension = "_" + codGrupo + "." + FilenameUtils.getExtension(file.getAbsolutePath());
-    	
-    	if (file.exists()) {
-    		if (typeResource.equalsIgnoreCase("template")) {
-        		file.renameTo(new File(pathTemplates + "recibo" + fileExtension));
-        		
-    		} else if (typeResource.equalsIgnoreCase("header") || typeResource.equalsIgnoreCase("signature")) {
-    			file.renameTo(new File(pathImg + codGrupo + "\\" + file.getName()));
-    			
-    	    } else if (typeResource.equalsIgnoreCase("watermark")) {
-    			file.renameTo(new File(pathImg + codGrupo + "\\" + "marca_agua" + fileExtension));
-    		}
-    		
-    		file.delete();
-    		return true;
-    		
-    	} else {
-    		System.out.println("El archivo especificado no existe.");
-    		return false;
-    	}
-    }
-    
-    public void createResourceSubDir(String codGrupo) {
-    	File imgDir = new File(pathImg + codGrupo);
-    	
-    	if (!imgDir.exists()) {
-    		imgDir.mkdirs();
-    	} else {
-    		System.out.println("El directorio ya existe.");
-    	}
-    }
+
+	public void generateTemplate(String grupo,
+									MultipartFile template,
+									MultipartFile header,
+									MultipartFile signature,
+									MultipartFile watermark) throws IOException {
+
+		File imDir = new File(pathImg + grupo.toUpperCase());
+		if (!imDir.exists()) {
+			imDir.mkdirs();
+		}
+		final Path rootTemplate = Paths.get(pathTemplates );
+		final Path rootImg = Paths.get(pathImg + grupo.toUpperCase());
+		List<String> fileNames = new ArrayList<>();
+
+		Files.copy(template.getInputStream(), rootTemplate.resolve("recibo_"+grupo.toUpperCase()+".html"),REPLACE_EXISTING);
+		fileNames.add(template.getOriginalFilename());
+		Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()),REPLACE_EXISTING);
+		fileNames.add(header.getOriginalFilename());
+		Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()),REPLACE_EXISTING);
+		fileNames.add(signature.getOriginalFilename());
+		Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())),REPLACE_EXISTING);
+		fileNames.add(watermark.getOriginalFilename());
+
+
+	}
+
+//    public void generateTemplate(
+//    		String codGrupo,
+//    		String htmlTemplateName,
+//    		String headerName,
+//    		String signatureName,
+//    		String watermarkName
+//    		) throws IOException, DocumentException {
+//    	createResourceSubDir(codGrupo);
+//
+//    	File fileTemplate = new File(pathPreview + htmlTemplateName);
+//    	File fileHeader = new File(pathPreview + headerName);
+//    	File fileSignature = new File(pathPreview + signatureName);
+//
+//    	if (fileTemplate.exists() && renameResourceFile(fileTemplate, codGrupo, "template")) {
+//    		fileTemplate.delete();
+//        } else {
+//        	System.out.println("Ocurrió un error al mover el Template al directorio final.");
+//        }
+//
+//    	if (fileHeader.exists() && renameResourceFile(fileHeader, codGrupo, "header")) {
+//    		fileHeader.delete();
+//        } else {
+//        	System.out.println("Ocurrió un error al mover el Encabezado al directorio final.");
+//        }
+//
+//    	if (fileSignature.exists() && renameResourceFile(fileSignature, codGrupo, "signature")) {
+//    		fileSignature.delete();
+//        } else {
+//        	System.out.println("Ocurrió un error al mover la Firma al directorio final.");
+//        }
+//
+//    	if (watermarkName != null) {
+//    		File fileWatermark = new File(pathPreview + watermarkName);
+//
+//    		if (fileWatermark.exists() && renameResourceFile(fileWatermark, codGrupo, "watermark")) {
+//        		fileWatermark.delete();
+//            } else {
+//            	System.out.println("Ocurrió un error al mover la Marca de Agua al directorio final.");
+//            }
+//    	}
+//    }
+//
+//    public boolean renameResourceFile(File file, String codGrupo, String typeResource) {
+//    	String fileExtension = "_" + codGrupo + "." + FilenameUtils.getExtension(file.getAbsolutePath());
+//
+//    	if (file.exists()) {
+//    		if (typeResource.equalsIgnoreCase("template")) {
+//        		file.renameTo(new File(pathTemplates + "recibo" + fileExtension));
+//
+//    		} else if (typeResource.equalsIgnoreCase("header") || typeResource.equalsIgnoreCase("signature")) {
+//    			file.renameTo(new File(pathImg + codGrupo + "\\" + file.getName()));
+//
+//    	    } else if (typeResource.equalsIgnoreCase("watermark")) {
+//    			file.renameTo(new File(pathImg + codGrupo + "\\" + "marca_agua" + fileExtension));
+//    		}
+//
+//    		file.delete();
+//    		return true;
+//
+//    	} else {
+//    		System.out.println("El archivo especificado no existe.");
+//    		return false;
+//    	}
+//    }
+//
+//    public void createResourceSubDir(String codGrupo) {
+//    	File imgDir = new File(pathImg + codGrupo);
+//
+//    	if (!imgDir.exists()) {
+//    		imgDir.mkdirs();
+//    	} else {
+//    		System.out.println("El directorio ya existe.");
+//    	}
+//    }
+public void uploadFilesTemplate(String grupo,
+									MultipartFile template,
+									MultipartFile header,
+									MultipartFile signature,
+									MultipartFile watermark) throws IOException {
+
+	File imDir = new File(pathImg + grupo.toUpperCase());
+	if (!imDir.exists()) {
+		imDir.mkdirs();
+	}
+	final Path rootTemplate = Paths.get(pathTemplates );
+	final Path rootImg = Paths.get(pathImg + grupo.toUpperCase());
+	List<String> fileNames = new ArrayList<>();
+
+	Files.copy(template.getInputStream(), rootTemplate.resolve("_recibo_"+grupo.toUpperCase()+".html"));
+	fileNames.add(template.getOriginalFilename());
+	Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()));
+	fileNames.add(header.getOriginalFilename());
+	Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()));
+	fileNames.add(signature.getOriginalFilename());
+	Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())));
+	fileNames.add(watermark.getOriginalFilename());
+
+
+}
+    public void uploadTempFilesTemplate(String grupo,
+										MultipartFile template,
+										MultipartFile header,
+										MultipartFile signature,
+										MultipartFile watermark) throws IOException {
+
+			File imDir = new File(pathImg + "tmp");
+			if (!imDir.exists()) {
+				imDir.mkdirs();
+			}
+			final Path rootTemplate = Paths.get(pathTemplates );
+			final Path rootImg = Paths.get(pathImg + "tmp");
+			List<String> fileNames = new ArrayList<>();
+
+				Files.copy(template.getInputStream(), rootTemplate.resolve("_recibo_"+grupo.toUpperCase()+".html"));
+				fileNames.add(template.getOriginalFilename());
+				Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()));
+				fileNames.add(header.getOriginalFilename());
+				Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()));
+				fileNames.add(signature.getOriginalFilename());
+				Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())));
+				fileNames.add(watermark.getOriginalFilename());
+
+
+		}
+
 }
