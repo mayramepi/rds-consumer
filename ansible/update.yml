@@ -37,4 +37,13 @@
         dest: "{{ path }}/{{ folder }}"
         version: "{{ tag }}"
       when: tag is defined
+    - name: GIVING EXECUTION PERMISSION TO SHELL FILES
+      file:
+        path: "{{ path }}/{{ folder }}/ansible/shell/"
+        state: directory
+        mode: u=rwx
+        recurse: yes
+    - name: CONFIGURING THE APPLICATION
+      shell: "{{ path }}/{{ folder }}/ansible/shell/update.sh {{ path }}/{{ folder }}"
+
 
