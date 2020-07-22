@@ -64,3 +64,8 @@
     - name: CONFIGURING THE APPLICATION
       shell: "{{ path }}/{{ folder }}/ansible/shell/config-app.sh {{ path }}/{{ folder }}  {{ dominio_front }} {{ url_back }} {{httpd_config}} {{httpd_daemon}}"
 
+  CONFIG_USER=$2
+  CONFIG_PASS=$3
+  CONFIG_HOST=$4
+  CONFIG_SERVICE_NAME=$5
+  CONFIG_PORT=$6

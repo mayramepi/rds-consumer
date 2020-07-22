@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-source ./config.sh
 sleep 5
 while [ "$1" != "" ]; do
     echo "Parameter 1 equals $1"

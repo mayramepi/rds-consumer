@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-source ./config.sh
 if [ -s "nohup.out" ]
 then
        
