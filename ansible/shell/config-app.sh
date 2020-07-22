@@ -15,10 +15,11 @@ CONFIG_HOST=$4
 CONFIG_SERVICE_NAME=$5
 CONFIG_PORT=$6
 echo "
-DOMINIO_FRONT=$3
-URL_BACK=$4
-HTTPD_CONFIG=$4
-HTTPD_DAEMON=$5
+APP_PATH=$1
+CONFIG_USER=$2
+CONFIG_HOST=$4
+CONFIG_SERVICE_NAME=$5
+CONFIG_PORT=$6"
 cd $APP_PATH/source
 
 
@@ -30,7 +31,9 @@ sed -i "s/CONFIG_SERVICE_NAME/${CONFIG_SERVICE_NAME//\//\\/}/g" config..sh
 sed -i "s/CONFIG_PORT/${CONFIG_PORT//\//\\/}/g" config..sh
 
 source config.sh
-startjava
+../ansible/shell/startjava.sh
+
+
 
 
 ########################################################################################################################
