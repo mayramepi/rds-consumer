@@ -31,8 +31,7 @@
         <repository>
             <id>nexus</id>
             <name>Nexus Repository</name>
-<!--            <url>http://nexus-esb.gcba.gob.ar/repository/Public/</url>-->
-            <url>http://10.9.5.169/repository/Public/</url>
+            <url>http://nexus-esb.gcba.gob.ar/repository/Public/</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -42,7 +41,7 @@
         <swagger.version>2.9.2</swagger.version>
         <itext.version>5.5.13.1</itext.version>
         <model.version>00.00.01-RC5</model.version>
-        <commons.version>00.00.01-RC4</commons.version>
+        <commons.version>00.00.01-RC5</commons.version>
         <logging.version>00.00.01-RC2</logging.version>
     </properties>
 
