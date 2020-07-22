@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-#source /opt/export
+
 source ./config.sh
 sleep 5
 while [ "$1" != "" ]; do

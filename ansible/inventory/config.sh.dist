@@ -7,11 +7,11 @@ echo "USERNAME "$DB_USERNAME
 echo "PASSWORD" $DB_PASSWORD
 echo "URL" "jdbc:oracle:thin:@"$DB_HOST:$DB_PORT/$DB_SERVICE_NAME
 echo "iniciando...."
-declare -x DB_USERNAME="APPRECIBOS_DEMO"
-declare -x DB_PASSWORD="123456"
-declare -x DB_HOST="10.9.10.22"
-declare -x DB_SERVICE_NAME="estab.gcba.gob.ar"
-declare -x DB_PORT="1521"
+declare -x DB_USERNAME="CONFIG_USER"
+declare -x DB_PASSWORD="CONFIG_PASS"
+declare -x DB_HOST="CONFIG_HOST"
+declare -x DB_SERVICE_NAME="CONFIG_SERVICE_NAME"
+declare -x DB_PORT="CONFIG_PORT"
 declare -x FLYWAY=false
 declare -x MIGRATE=false
 declare -x JAVA_PORT="8085"
@@ -30,6 +30,6 @@ declare  -x DSERVER_PARAMS="-Dserver.port=8085"
 #declare -x SEGURIDAD_VALIDACAPTCHA="false"
 #declare -x SEGURIDAD_CHEQUEO="false"
 #declare -x CHECKAD="false"
-#declare -x BRANCH=`git status|grep "On branch"|cut -d " " -f4`
+#declare -x BRANCH=`git status|grep -w "On branch\|En la rama" |cut -d " " -f4`
 echo " branch ----> $BRANCH"
 

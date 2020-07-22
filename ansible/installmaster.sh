@@ -2,15 +2,15 @@
 #   -e @extra-vars/default-parameters.json \
 ansible-playbook -i ./inventory/hosts install.yml \
             -u root \
-            -e dominio_front="front-evaluacion-qa.testr7.dev.gcba.gob.ar" \
-            -e url_back="https://10.9.5.169" \
             -e env=dev \
-            -e repository="git@git-asi.buenosaires.gob.ar:usuarioQA/asi-344-eval_desem_front.git" \
-            -e branch="master" \
-            -e tag="v0.1.0" \
-            -e folder="asi-344-eval_desem_qa" \
-            -e path="/var/www/html/disco50/java" \
-            -e httpd_config="/etc/httpd/conf.d/front-evaluacion-qa.conf" \
-            -e httpd_daemon="httpd" \
-            -v
+            -e repository="git@ssh-repositorio-ce-asi.buenosaires.gob.ar:reingenieria-recibos-sueldo/rds-consumer.git" \
+            -e folder="rds-consumer" \
+            -e branch="dev" \
+            -e path="/java/rds-consumer" \
+            -e db_user="APPRECIBOS_DEMO" \
+            -e db_pass="123456" \
+            -e db_host="10.9.10.22" \
+            -e db-servicename="estab.gcba.gob.ar" \
+            -e db-port="1521"
+            -vv
 
