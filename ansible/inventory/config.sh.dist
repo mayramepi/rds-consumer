@@ -2,12 +2,16 @@
 declare -x JAVA_JAR=`find ./target -name *.jar`
 declare -x JAVA_BIN=java
 declare -x DATABASE_NUMBER=2
-source conector.sh
 echo "Iniciando java con datasource:"
 echo "USERNAME "$DB_USERNAME
 echo "PASSWORD" $DB_PASSWORD
 echo "URL" "jdbc:oracle:thin:@"$DB_HOST:$DB_PORT/$DB_SERVICE_NAME
 echo "iniciando...."
+declare -x DB_USERNAME="APPRECIBOS_DEMO"
+declare -x DB_PASSWORD="123456"
+declare -x DB_HOST="10.9.10.22"
+declare -x DB_SERVICE_NAME="estab.gcba.gob.ar"
+declare -x DB_PORT="1521"
 declare -x FLYWAY=false
 declare -x MIGRATE=false
 declare -x JAVA_PORT="8085"

@@ -20,6 +20,10 @@ HTTPD_CONFIG=$4
 HTTPD_DAEMON=$5
 cd $APP_PATH/source
 
+
+cp ../ansible/inventory/config.sh config.sh
+cp ../ansible/inventory/config.sh config.sh
+sed -i "s/URL_BACK/${URL_BACK//\//\\/}/g" front/assets/config/config.json
 source config.sh
 startjava
 
