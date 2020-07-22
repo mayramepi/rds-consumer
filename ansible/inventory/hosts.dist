@@ -1,0 +1,17 @@
+[dev]
+10.9.6.236
+
+[qa]
+QA_IP_HOST
+
+[hml]
+HML_IP_HOST
+
+[prod]
+PROD_IP_HOST
+
+[asi:children]
+dev
+qa
+hml
+prod

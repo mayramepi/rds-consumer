@@ -1,0 +1,10 @@
+ansible-playbook -i ./inventory/asi-234-establecimientos install.yml \
+        -e @extra-vars/asi-234-establecimientos.json \
+        -u desarrollo \
+        -e ansible_ssh_pass=dsrrll \
+        -e db_host=localhost \
+        -e db_name=asi_234_api_establecimientos \
+        -e db_user=establecimientos \
+        -e db_pass=establecimientos \
+        -e db_port=3306 \
+        -vvv

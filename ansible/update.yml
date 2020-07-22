@@ -1,0 +1,40 @@
+---
+- name: UPGRADE
+  hosts: "{{ env }}"
+  become: True
+  tasks:
+
+    ## VERIFICACION DE QUE SE CLONÓ EL PROYECTO EN EL DIRECTORIO INDICADO
+    - name: FIND "{{ path }}/{{ folder }}" FOLDER
+      stat:
+        path: "{{ path }}/{{ folder }}"
+      register: sym
+
+    ## MENSAJE DE ERROR AL NO CLONARSE DEL REPO
+    - fail:
+        msg: "{{ path }}/{{ folder }} isn't defined (path doesn't exist), please do the installation process before doing this process"
+      when: sym.stat.islnk is not defined
+
+    ## INFO DEL QUE SE CLONÓ EXITOSAMENTE DEL REPO
+    - debug:
+        msg: "{{ path }}/{{ folder }} is defined"
+      when: sym.stat.islnk is defined
+        ## CLONANDO DEL REPO
+    - name: GIT CHECKOUT => "{{ repository }}"
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ path }}/{{ folder }}"
+        version: "{{ branch }}"
+    ## FETCH DE TODOS LOS TAGS
+    - name: FETCHING TAGS FROM REMOTE
+      shell: "git fetch --tags"
+      args:
+        chdir: "{{ path }}/{{ folder }}"
+      ## GIT CHECKOUT DEL ULTIMO TAG CREADO, SI EL PARAMETRO TAG NO ESTA DEFINIDO
+    - name: GIT CHECKOUT TAG => "{{ tag }}"
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ path }}/{{ folder }}"
+        version: "{{ tag }}"
+      when: tag is defined
+

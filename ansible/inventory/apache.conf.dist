@@ -1,0 +1,29 @@
+           <VirtualHost *:80>
+            DocumentRoot "PROJECT_ROOT/source/front"
+            ServerName DOMINIO_FRONT
+           <Directory PROJECT_ROOT/source/front >
+               DirectoryIndex index.html
+                   AllowOverride All
+                   Allow from All
+                   #Require all granted
+                   RewriteEngine on
+                   # Don't rewrite files or directories
+                   RewriteCond %{REQUEST_FILENAME} -f [OR]
+                   RewriteCond %{REQUEST_FILENAME} -d
+                   RewriteRule ^ - [L]
+
+                   # Rewrite everything else to index.html
+                   # to allow html5 state links
+                   RewriteRule ^ index.html [L]
+
+           </Directory>
+               # disable TRACE and TRACK in the www.example.com virtual host
+                  RewriteEngine On
+                  RewriteCond %{REQUEST_METHOD} ^TRACE
+                  RewriteRule .* - [F]
+                  RewriteCond %{REQUEST_METHOD} ^TRACK
+                  RewriteRule .* -
+               ErrorLog logs/error_DOMINIO_FRONT-log
+               CustomLog logs/access_DOMINIO_FRONT-log combined
+
+           </VirtualHost>
