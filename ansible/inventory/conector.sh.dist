@@ -1,0 +1,29 @@
+case $DATABASE_NUMBER in
+     1)
+        echo "uno de la 22"
+
+        declare -x DB_USERNAME="APPRECIBOS_DEMO"
+        declare -x DB_PASSWORD="123456"
+        declare -x DB_HOST="10.9.10.22"
+        declare -x  DB_SERVICE_NAME="estab.gcba.gob.ar"
+        declare -x DB_PORT="1521"
+
+     ;;
+     2)
+        echo "uno de la 22"
+
+        declare -x DB_USERNAME="reingenieriarecibos_dev"
+        declare -x DB_PASSWORD="reing_2k19"
+        declare -x DB_HOST="exadb.gcba.gob.ar"
+        declare -x DB_SERVICE_NAME="dgisdv12.gcba.gob.ar"
+        declare -x DB_PORT="1521"
+
+     ;;
+     *)
+        echo "no seteo la base de datos"
+        exit;
+     ;;
+  esac
+
+
+
