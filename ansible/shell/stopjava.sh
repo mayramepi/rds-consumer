@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source ./config.sh
 if [ -s "nohup.out" ]
 then
        
@@ -15,10 +16,11 @@ then
 	rm -f $input
 fi
 echo "$JAVA_PORT del config"
-PID=`netstat -lptn|grep "::$JAVA_PORT "|awk '{print $7}'|cut -d '/' -f1`
+#PID=`netstat -lptn|grep "::$JAVA_PORT "|awk '{print $7}'|cut -d '/' -f1`
+PID=`ps ax|grep "$JAVA_JAR"|grep java|awk '{print $1}'`
 if [ "$PID" != "" ]
  then
-  echo "killing proceso $PID/$JAVA_PORT  "
+  echo "killing proceso pid $PID/ puerto $JAVA_PORT  "
   kill  $PID
 fi
 

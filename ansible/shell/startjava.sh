@@ -51,7 +51,7 @@ nohup $CMD&
 #nohup $CMD>/dev/null 2>&1 &
 PID=$!
 #sleep 10
-#tail -f nohup.out &             
+tail -f nohup.out &
 while [ ! -f "nohup.out" ];
 do
       sleep 5
