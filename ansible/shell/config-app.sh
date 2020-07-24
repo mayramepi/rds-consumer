@@ -24,10 +24,10 @@ cd $APP_PATH/source
 
 
 cp ../ansible/inventory/config.sh config.sh
-sed -i "s/CONFIG_USER/${CONFIG_USER//\//\\/}/g" config..sh
-sed -i "s/CONFIG_PASS/${CONFIG_PASS//\//\\/}/g" config..sh
-sed -i "s/CONFIG_HOST/${CONFIG_HOST//\//\\/}/g" config..sh
-sed -i "s/CONFIG_SERVICE_NAME/${CONFIG_SERVICE_NAME//\//\\/}/g" config..sh
+sed -i "s/CONFIG_USER/${CONFIG_USER//\//\\/}/g" config.sh
+sed -i "s/CONFIG_PASS/${CONFIG_PASS//\//\\/}/g" config.sh
+sed -i "s/CONFIG_HOST/${CONFIG_HOST//\//\\/}/g" config.sh
+sed -i "s/CONFIG_SERVICE_NAME/${CONFIG_SERVICE_NAME//\//\\/}/g" config.sh
 sed -i "s/CONFIG_PORT/${CONFIG_PORT//\//\\/}/g" config..sh
 
 source config.sh
