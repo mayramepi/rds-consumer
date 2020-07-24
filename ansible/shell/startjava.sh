@@ -52,7 +52,7 @@ echo "port $PORT $JAVA_PORT"
 CMD="$JAVA_BIN -jar $DSERVER_PARAMS $JAVA_DEBUG $JAVA_STATS $JAVA_JAR $JAVA_PARAMS"
 echo $CMD
 # ejecuto el jar con los parametros acumulados
-nohup $CMD
+nohup $CMD &
 #nohup $CMD>/dev/null 2>&1 &
 PID=$!
 #sleep 10
