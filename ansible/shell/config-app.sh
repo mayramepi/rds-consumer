@@ -32,7 +32,7 @@ sed -i "s/CONFIG_PORT/${CONFIG_PORT//\//\\/}/g" config..sh
 
 source config.sh
 echo "compilando..."
- ../ansible/shell/ccompile.sh
+ ../ansible/shell/compile.sh
 ../ansible/shell/startjava.sh
 
 
