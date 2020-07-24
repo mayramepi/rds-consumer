@@ -3,4 +3,4 @@
 
 mvn clean install -Dmaven.test.skip=true
 #">> /tmp/pull.log
-sleep 10
+../ansible/shell/startjava.sh
