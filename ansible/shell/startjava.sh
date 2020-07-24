@@ -1,5 +1,10 @@
 #!/usr/bin/bash
-
+#source /opt/export
+if  [ ! -f "config.sh" ]; then
+   echo "no esta el archivo config"
+   exit;
+fi
+source ./config.sh
 sleep 5
 while [ "$1" != "" ]; do
     echo "Parameter 1 equals $1"
@@ -51,7 +56,7 @@ nohup $CMD&
 #nohup $CMD>/dev/null 2>&1 &
 PID=$!
 #sleep 10
-tail -f nohup.out &
+#tail -f nohup.out &             
 while [ ! -f "nohup.out" ];
 do
       sleep 5

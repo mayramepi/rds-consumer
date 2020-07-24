@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if  [ ! -f "config.sh" ]; then
+   echo "no esta el archivo config"
+   exit;
+fi
 source ./config.sh
 if [ -s "nohup.out" ]
 then
