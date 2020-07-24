@@ -29,7 +29,7 @@ sed -i "s/CONFIG_PASS/${CONFIG_PASS//\//\\/}/g" config.sh
 sed -i "s/CONFIG_HOST/${CONFIG_HOST//\//\\/}/g" config.sh
 sed -i "s/CONFIG_SERVICE_NAME/${CONFIG_SERVICE_NAME//\//\\/}/g" config.sh
 sed -i "s/CONFIG_PORT/${CONFIG_PORT//\//\\/}/g" config.sh
-export M2_HOME=/usr/local/apache-maven-3.5.4
+export M2_HOME=/usr/local/apache-maven-3.6.3
 export JRE_HOME=/usr/lib/jvm/jre
 export M2=$M2_HOME/bin
 export PATH=$M2:$PATH
