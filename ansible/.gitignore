@@ -2,6 +2,5 @@
 *.retry
 options
 hosts
-update.sh
-install.sh
+
 
