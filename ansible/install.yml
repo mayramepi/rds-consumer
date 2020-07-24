@@ -62,5 +62,5 @@
         mode: u=rwx
         recurse: yes
     - name: CONFIGURING THE APPLICATION
-      shell: "{{ path }}/{{ folder }}/ansible/shell/config-app.sh {{ path }}/{{ folder }} {{ db_user }} {{ db_pass }} {{db_host}} {{db-servicename}} {{db-port}}"
+      shell: "{{ path }}/{{ folder }}/ansible/shell/config-app.sh {{ path }}/{{ folder }} {{ db_user }} {{ db_pass }} {{db_host}} {{db_servicename}} {{db_port}}"
 
