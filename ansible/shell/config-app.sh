@@ -4,7 +4,7 @@
 
 # CAPTURANDO LAS VARIABLES RECIBIDAS DEL COMMAND STRING EN VARIABLES DEL ARCHIVO
 if [ -z $1 ]; then
-  echo ""
+  echo "faltan parametros \n"
   exit 1
 else
   APP_PATH=$1
