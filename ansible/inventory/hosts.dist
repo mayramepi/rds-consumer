@@ -1,5 +1,5 @@
 [dev]
-10.9.6.236
+10.9.10.175
 
 [qa]
 QA_IP_HOST
@@ -11,7 +11,7 @@ HML_IP_HOST
 PROD_IP_HOST
 
 [asi:children]
-dev
-qa
-hml
-prod
+    dev
+    qa
+    hml
+    prod
