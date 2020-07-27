@@ -24,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.itextpdf.text.DocumentException;
@@ -93,6 +94,8 @@ public class GeneratePDFController {
 
     @PostMapping(value = "/previsualizarPDF" )
     //@ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     public ResponseEntity<?> generate2(
                                             @RequestParam("codigoGrupo") String codigoGrupo,
                                             @RequestParam("template") MultipartFile template,
