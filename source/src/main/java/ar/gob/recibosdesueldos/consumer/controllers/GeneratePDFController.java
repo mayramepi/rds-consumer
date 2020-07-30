@@ -94,7 +94,7 @@ public class GeneratePDFController {
 
     @PostMapping(value = "/previsualizarPDF" )
     //@ResponseStatus(value = HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+  //  @PreAuthorize("hasRole('ROLE_ADMIN')")
 
     public ResponseEntity<?> generate2(
                                             @RequestParam("codigoGrupo") String codigoGrupo,

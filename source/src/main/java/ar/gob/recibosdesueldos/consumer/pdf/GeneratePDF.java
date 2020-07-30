@@ -374,6 +374,20 @@ public class GeneratePDF {
 		if(!grupoService.existeByCodGrupo(grupo)) {
 			throw new CustomException("No exite el grupo:'"+grupo+"'",HttpStatus.BAD_REQUEST);
 		}
+
+        if(!template.getContentType().equals("text/html")) {
+            throw new CustomException("El archivo de template "+template.getOriginalFilename()+" no es del tipo text/html'",HttpStatus.BAD_REQUEST);
+        }
+        if(!header.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
+            throw new CustomException("El archivo del encabezado "+header.getOriginalFilename()+" no es del tipo image/gif o image/jpeg'",HttpStatus.BAD_REQUEST);
+        }
+        if(!signature.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
+            throw new CustomException("El archivo de la firma"+signature.getOriginalFilename()+" no es del tipo image/gif o image/jpeg'",HttpStatus.BAD_REQUEST);
+        }
+        if(!watermark.getContentType().equals("image/gif")) {
+            throw new CustomException("El el archivo de la marca de agua "+watermark.getOriginalFilename()+" no es del tipo image/gif '",HttpStatus.BAD_REQUEST);
+        }
+
 		final Path rootTemplate = Paths.get(pathTemplates );
 		final Path rootImg = Paths.get(pathImg);
 		if(template!=null && !template.isEmpty())
