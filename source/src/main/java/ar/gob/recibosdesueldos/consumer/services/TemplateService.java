@@ -169,7 +169,7 @@ public class TemplateService extends PlantillaService {
         if (templateTempFile.exists()) {
             templateTempFile.delete();
         }
-        String filePath = previewDir + "/x-xx-xx_0null_0.pdf";
+        String filePath = previewDir + "/8-20266221488-20266221488_2020null_0.pdf";
         File prevPDF = new File(filePath);
         if (prevPDF.exists()) {
             prevPDF.delete();

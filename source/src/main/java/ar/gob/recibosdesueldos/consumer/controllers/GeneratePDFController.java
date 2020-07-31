@@ -106,6 +106,7 @@ public class GeneratePDFController {
 
     public ResponseEntity<?> generate2(
                                             @RequestParam("codigoGrupo") String codigoGrupo,
+                                            @RequestParam("maxDetalles") int maxDetalles,
                                             @RequestParam("template") MultipartFile template,
                                             @RequestParam("header") MultipartFile header,
                                             @RequestParam("signature") MultipartFile signature,
@@ -119,9 +120,9 @@ public class GeneratePDFController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    	this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp\\", cssDir);
+    	this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
 
-        String filePath = previewDir+"/x-xx-xx_0null_0.pdf";
+        String filePath = previewDir+"/8-20266221488-20266221488_2020null_0.pdf";
 
         byte[] bFile = Files.readAllBytes(Paths.get(filePath));
         templateService.borraTempTemplatesFiles(codigoGrupo);

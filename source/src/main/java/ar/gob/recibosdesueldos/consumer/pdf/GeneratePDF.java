@@ -175,7 +175,7 @@ public class GeneratePDF {
         pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"/");
     }
 
-    public void previsualizarPdf(String codigoGrupo,String dirTemp,String dirFinal,String pathImg1,String pathCss1) throws IOException, DocumentException {
+    public void previsualizarPdf(String codigoGrupo,String dirTemp,String dirFinal,String pathImg1,String pathCss1,int maxDetalles) throws IOException, DocumentException {
     	Map<String, Object> variables = new HashMap<>();
 
  		String htmlTemplateName = "_recibo_" + codigoGrupo;
@@ -183,7 +183,7 @@ public class GeneratePDF {
 
 
         // Seteo de variables de Recibo
-        Recibo recibo = this.setRecibo(codigoGrupo);
+        Recibo recibo = this.setRecibo(codigoGrupo,maxDetalles);
         variables.put("idRecibo", recibo.getIdRecibo());
         variables.put("idlote", recibo.getIdLote());
         variables.put("periodoMes", recibo.getPeriodoMes());
@@ -268,56 +268,74 @@ public class GeneratePDF {
 
         pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss1, pathImg1+"/"+codigoGrupo+"/");
      }
+	private static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
+		BigDecimal randomBigDecimal = min.add(new BigDecimal(Math.random()).multiply(max.subtract(min)));
+		return randomBigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+	}
+    private Recibo setRecibo(String codigoGrupo, int maxDetalles) {
+    	List<DetalleRecibo> detalles=new ArrayList<>();
 
-    private Recibo setRecibo(String codigoGrupo) {
-    	DetalleRecibo detalle1 = new DetalleRecibo();
-	    DetalleRecibo detalle2 = new DetalleRecibo();
-	    DetalleRecibo detalle3 = new DetalleRecibo();
-	    DetalleRecibo detalle4 = new DetalleRecibo();
-	    DetalleRecibo detalle5 = new DetalleRecibo();
-	    DetalleRecibo detalle6 = new DetalleRecibo();
-	    this.setDetalle(detalle1, Long.valueOf("1"), "ASIG", "haberes1", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("1"));
-	    this.setDetalle(detalle2, Long.valueOf("2"), "ASIG", "haberes2", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("2"));
-	    this.setDetalle(detalle3, Long.valueOf("3"), "ASIG", "haberes3", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("3"));
+		for (int i = 0; i < maxDetalles ; i++) {
+			DetalleRecibo detalle=new DetalleRecibo();
+			detalle.setIdDetalle((long) i);
+			detalle.setTipo("ASIG");
+			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,15)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,12)));
+			detalle.setImporte(generateRandomBigDecimalFromRange(BigDecimal.valueOf(0.01),BigDecimal.valueOf(9999999.99)));
+			detalle.setAjuste(generateRandomBigDecimalFromRange(BigDecimal.valueOf(-9999999.99),BigDecimal.valueOf(9999999.99)));
+			detalle.setOrdenTipo((long) i);
+			detalles.add(detalle);
+		}
+		for (int i = maxDetalles; i < maxDetalles*2 ; i++) {
+			DetalleRecibo detalle=new DetalleRecibo();
+			detalle.setIdDetalle((long) i);
+			detalle.setTipo("DESC");
+			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,15)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,12)));
+			detalle.setImporte(generateRandomBigDecimalFromRange(BigDecimal.valueOf(0.01),BigDecimal.valueOf(9999999.99)));
+			detalle.setAjuste(generateRandomBigDecimalFromRange(BigDecimal.valueOf(-9999999.99),BigDecimal.valueOf(9999999.99)));
+			detalle.setOrdenTipo((long) i);
+			detalles.add(detalle);
+		}
 
-	    this.setDetalle(detalle4, Long.valueOf("4"), "DESC", "descuento1", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("4"));
-	    this.setDetalle(detalle5, Long.valueOf("5"), "DESC", "descuento2", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("5"));
-	    this.setDetalle(detalle6, Long.valueOf("6"), "DESC", "descuento3", BigDecimal.valueOf(0), BigDecimal.valueOf(0), Long.valueOf("6"));
-	    ArrayList<DetalleRecibo> detalles = new ArrayList<DetalleRecibo>();
-	    detalles.add(detalle1);
-	    detalles.add(detalle2);
-	    detalles.add(detalle3);
-	    detalles.add(detalle4);
-	    detalles.add(detalle5);
-	    detalles.add(detalle6);
 	 	Recibo recibo = new Recibo();
 	    recibo.setIdRecibo(RandomUtils.nextLong(00,0));
-	    recibo.setApellidoNombre(RandomStringUtils.randomAlphabetic(10));
-	    recibo.setCuit("xx-" + RandomStringUtils.randomNumeric(0) + "-" + RandomStringUtils.randomNumeric(0));
-	    recibo.setPeriodoMes("xxx");
-	    recibo.setPeriodoAnio(Long.valueOf("0"));
-	    recibo.setApellidoNombre("xxxxx");
+	    recibo.setApellidoNombre(RandomStringUtils.randomAlphabetic(15) +" " + RandomStringUtils.randomAlphabetic(10));
+	    recibo.setCuit("20-26622148-8");
+	    recibo.setPeriodoMes("Mar");
+	    recibo.setPeriodoAnio(Long.valueOf("2020"));
+	  //  recibo.setApellidoNombre("xxxxx");
 	    recibo.setHaberesTotalImporte(BigDecimal.valueOf(0));
 	    recibo.setDescuentoTotalImporte(BigDecimal.valueOf(0));
 	    recibo.setLiquidoCobrar(BigDecimal.valueOf(0));
 	    recibo.setCodigoGrupo(codigoGrupo);
 	    recibo.setHaberesTotalAjuste(BigDecimal.valueOf(0));
 	    recibo.setDescuentoTotalAjuste(BigDecimal.valueOf(0));
-	    recibo.setNumero("xxxx");
-	    recibo.setObraSocial("xxxxx");
-	    recibo.setSucursalCuenta("xxxx");
-	    recibo.setDocumento(" xxxxx");
+	    recibo.setNumero("001051876/1/007");
+	    recibo.setObraSocial("O.S. CIUDAD DE BUENOS AIRES - Ob.S.B.A.");
+	    recibo.setSucursalCuenta("458342881498");
+	    recibo.setDocumento("26622148");
 	    recibo.setDetalles(detalles);
-	    recibo.setJurisdiccion("xxxx");
-	    recibo.setUnidad("xxxx");
-	    recibo.setCargo("xxxx");
-	    recibo.setPuesto("xxxx");
-	    recibo.setFicha("xxxx");
-	    recibo.setNumeroComprobante("xxxx");
-	    recibo.setAntiguedad("xxxx");
-
+	    recibo.setJurisdiccion("550");
+	    recibo.setUnidad("59020000");
+	    recibo.setCargo("040402020");
+	    recibo.setPuesto("1504");
+	    recibo.setFicha("393878");
+	    recibo.setNumeroComprobante("123123");
+	    recibo.setAntiguedad("xxx");
      	recibo.setFechaIngreso(new Date());
-     	return recibo;
+		recibo.setLiquidoCobrar(BigDecimal.valueOf(460600.78));
+		recibo.setDescuentoTotalAjuste(BigDecimal.valueOf(160600.78));
+		recibo.setDescuentoTotalImporte(BigDecimal.valueOf(260600.78));
+		recibo.setHaberesTotalAjuste(BigDecimal.valueOf(360600.78));
+		recibo.setHaberesTotalImporte(BigDecimal.valueOf(560600.78));
+		recibo.setUnidad("unidad");
+
+		recibo.setComunicaciones("Se genera cargos activos refinanciamiento de deuda por $553033.42 por haberes pagados en exceso");
+
+	//	recibo.setIdLote("AAEE");
+
+		recibo.setLiquidoAcobrarLetras("Cuatrocientos sesenta mil seiscientos con setenta y ocho (centavos o centésimos)");
+
+		return recibo;
     }
 
     private DetalleRecibo setDetalle(DetalleRecibo detalle, Long idDetalle, String tipo, String concepto,BigDecimal importe, BigDecimal ajuste, Long ordenTipo) {
