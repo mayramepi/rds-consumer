@@ -284,7 +284,7 @@ public class GeneratePDF {
 			DetalleRecibo detalle=new DetalleRecibo();
 			detalle.setIdDetalle((long) i);
 			detalle.setTipo("ASIG");
-			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,10)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,10)));
+			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,20)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,20)));
 			detalle.setImporte(generateRandomBigDecimalFromRange(BigDecimal.valueOf(0.01),BigDecimal.valueOf(9999999.99)));
 			detalle.setAjuste(generateRandomBigDecimalFromRange(BigDecimal.valueOf(-9999999.99),BigDecimal.valueOf(9999999.99)));
 			detalle.setOrdenTipo((long) i);
