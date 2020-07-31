@@ -125,6 +125,8 @@ public class GeneratePDF {
         for (DetalleRecibo detalleRecibo : plantillaPDF.getRecibo().getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
         	detalleHtml.setConcepto(detalleRecibo.getConcepto());
+			if(detalleHtml.getConcepto().length()>28)
+				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,28));
         	if(detalleRecibo.getImporte().compareTo(BigDecimal.valueOf(0)) == 0) {
         		detalleHtml.setImporte("");
         	}else {
@@ -218,7 +220,10 @@ public class GeneratePDF {
 
         for (DetalleRecibo detalleRecibo : recibo.getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
-         	detalleHtml.setConcepto(detalleRecibo.getConcepto());
+			detalleHtml.setConcepto(detalleRecibo.getConcepto());
+			if(detalleHtml.getConcepto().length()>28)
+				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,28));
+
          	if(detalleRecibo.getImporte().compareTo(BigDecimal.valueOf(0)) == 0) {
          		detalleHtml.setImporte("");
          	}else {
@@ -279,7 +284,7 @@ public class GeneratePDF {
 			DetalleRecibo detalle=new DetalleRecibo();
 			detalle.setIdDetalle((long) i);
 			detalle.setTipo("ASIG");
-			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,15)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,12)));
+			detalle.setConcepto(RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,10)) +" " + RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(3,10)));
 			detalle.setImporte(generateRandomBigDecimalFromRange(BigDecimal.valueOf(0.01),BigDecimal.valueOf(9999999.99)));
 			detalle.setAjuste(generateRandomBigDecimalFromRange(BigDecimal.valueOf(-9999999.99),BigDecimal.valueOf(9999999.99)));
 			detalle.setOrdenTipo((long) i);
