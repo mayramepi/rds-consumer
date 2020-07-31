@@ -172,7 +172,7 @@ public class GeneratePDF {
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
 
-        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"\\");
+        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"/");
     }
 
     public void previsualizarPdf(String codigoGrupo,String dirTemp,String dirFinal,String pathImg1,String pathCss1) throws IOException, DocumentException {
