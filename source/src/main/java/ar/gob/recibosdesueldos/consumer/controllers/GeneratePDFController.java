@@ -11,9 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import ar.gob.recibosdesueldos.commons.dto.generic.RestErrorResponse;
+import ar.gob.recibosdesueldos.commons.dto.generic.RestResponse;
 import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
+import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.consumer.services.TemplateService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,8 +47,12 @@ public class GeneratePDFController {
     private GeneratePDFService generatePDFService;
 
 	@Autowired
+    @Qualifier("generatePDF")
     private GeneratePDF generatePDF;
 
+    @Autowired
+    @Qualifier("templateService")
+    private TemplateService templateService;
 
 	@Value("${app.out_dir}")
     private String pathPdf;
@@ -75,21 +82,22 @@ public class GeneratePDFController {
     }
 
     @PostMapping(value = "/generateTemplate")
-    @ResponseStatus(value = HttpStatus.OK)
-    public ResponseEntity<?> generateTemplate(@RequestParam("codigoGrupo") String codigoGrupo,
+    public RestResponse<Plantilla> generateTemplate(@RequestParam("codigoGrupo") String codigoGrupo,
+                                              @RequestParam("descripcionPlantilla") String descripcionPlantilla,
                                               @RequestParam("template") MultipartFile template,
                                               @RequestParam("header") MultipartFile header,
                                               @RequestParam("signature") MultipartFile signature,
                                               @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
-		this.generatePDF.generateTemplate(
+        Plantilla plantilla =templateService.generateTemplate(
                 codigoGrupo.toUpperCase(),
+                descripcionPlantilla,
                 template,
                 header,
                 signature,
                 watermark
 		);
+        return new RestResponse<>(HttpStatus.OK,plantilla);
 
-		return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/previsualizarPDF" )
@@ -107,7 +115,7 @@ public class GeneratePDFController {
 
 
         try {
-            generatePDF.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
+            templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,7 +124,7 @@ public class GeneratePDFController {
         String filePath = previewDir+"/x-xx-xx_0null_0.pdf";
 
         byte[] bFile = Files.readAllBytes(Paths.get(filePath));
-        generatePDF.borraTempTemplatesFiles(codigoGrupo);
+        templateService.borraTempTemplatesFiles(codigoGrupo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");

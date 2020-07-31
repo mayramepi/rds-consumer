@@ -11,7 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import ar.gob.recibosdesueldos.commons.exception.CustomException;
+import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.commons.service.PlantillaService;
 import ar.gob.recibosdesueldos.commons.utils.RdsUtils;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -38,7 +40,7 @@ import ar.gob.recibosdesueldos.model.messaging.Recibo;
 import ar.gob.recibossueldos.consumer.constant.Constantes;
 
 @Component
-@Service
+@Service("generatePDF")
 public class GeneratePDF {
 
 	@Value("${app.preview_dir}")
@@ -54,19 +56,6 @@ public class GeneratePDF {
 	private String pathTemplates;
 	@Value("${app.preview_dir}")
 	private String previewDir;
-
-	@Autowired
-	@Qualifier("grupoService")
-	private GrupoService grupoService;
-
-//	@Value("${resources.templates}")
-//	private String templatesDir;
-
-//	@Value("${resources.img}")
-//	private String imgDir;
-
-//	@Value("${resources.css}")
-//	private String cssDir;
 
 	@Value("${app.out_dir_temp}")
 	private String tempDir;
@@ -277,7 +266,7 @@ public class GeneratePDF {
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
 
-        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss1, pathImg1);
+        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss1, pathImg1+"/"+codigoGrupo+"/");
      }
 
     private Recibo setRecibo(String codigoGrupo) {
@@ -342,83 +331,4 @@ public class GeneratePDF {
     }
 
 
-	public void generateTemplate(String grupo,
-									MultipartFile template,
-									MultipartFile header,
-									MultipartFile signature,
-									MultipartFile watermark) throws IOException, CustomException {
-
-		uploadFilesTemplate( grupo,pathImg,pathTemplates,"",template,header,signature,watermark);
-	}
-
-    public void uploadTempFilesTemplate(String grupo,
-										MultipartFile template,
-										MultipartFile header,
-										MultipartFile signature,
-										MultipartFile watermark) throws IOException, CustomException {
-
-			File imDir = new File(pathImg + "tmp");
-			if (!imDir.exists()) {
-				imDir.mkdirs();
-			}
-			uploadFilesTemplate( grupo,pathImg + "tmp",pathTemplates,"_",template,header,signature,watermark);
-		}
-	public void uploadFilesTemplate(String grupo,
-										String pathImg,
-										String pathTemplates,
-										String prefijoTemplate,
-										MultipartFile template,
-										MultipartFile header,
-										MultipartFile signature,
-										MultipartFile watermark) throws IOException, CustomException {
-		if(!grupoService.existeByCodGrupo(grupo)) {
-			throw new CustomException("No exite el grupo:'"+grupo+"'",HttpStatus.BAD_REQUEST);
-		}
-
-        if(!template.getContentType().equals("text/html")) {
-            throw new CustomException("El archivo de template "+template.getOriginalFilename()+" no es del tipo text/html'",HttpStatus.BAD_REQUEST);
-        }
-        if(!header.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
-            throw new CustomException("El archivo del encabezado "+header.getOriginalFilename()+" no es del tipo image/gif o image/jpeg'",HttpStatus.BAD_REQUEST);
-        }
-        if(!signature.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
-            throw new CustomException("El archivo de la firma"+signature.getOriginalFilename()+" no es del tipo image/gif o image/jpeg'",HttpStatus.BAD_REQUEST);
-        }
-        if(!watermark.getContentType().equals("image/gif")) {
-            throw new CustomException("El el archivo de la marca de agua "+watermark.getOriginalFilename()+" no es del tipo image/gif '",HttpStatus.BAD_REQUEST);
-        }
-
-		final Path rootTemplate = Paths.get(pathTemplates );
-		final Path rootImg = Paths.get(pathImg);
-		if(template!=null && !template.isEmpty())
-			Files.copy(template.getInputStream(), rootTemplate.resolve(prefijoTemplate+"recibo_"+grupo.toUpperCase()+".html"),REPLACE_EXISTING);
-		if(header!=null && !header.isEmpty())
-			Files.copy(header.getInputStream(), rootImg.resolve(header.getOriginalFilename()),REPLACE_EXISTING);
-		if(signature!=null && !signature.isEmpty())
-			Files.copy(signature.getInputStream(), rootImg.resolve(signature.getOriginalFilename()),REPLACE_EXISTING);
-		if(watermark!=null && !watermark.isEmpty())
-			Files.copy(watermark.getInputStream(), rootImg.resolve("marca_agua_"+grupo.toUpperCase()+"."+FilenameUtils.getExtension(watermark.getOriginalFilename())),REPLACE_EXISTING);
-
-	}
-
-	public void borraTempTemplatesFiles(String grupo) throws IOException{
-		final Path TEMP_DIRECTORY = Paths.get(pathImg );
-
-		Path pathToBeDeleted = TEMP_DIRECTORY.resolve("tmp");
-
-		Files.walk(pathToBeDeleted)
-				.sorted(Comparator.reverseOrder())
-				.map(Path::toFile)
-				.forEach(File::delete);
-
-		File templateTempFile = new File(pathTemplates+"\\_recibo_"+grupo.toUpperCase()+".html");
-		if (templateTempFile.exists()) {
-			templateTempFile.delete();
-		}
-		String filePath = previewDir+"/x-xx-xx_0null_0.pdf";
-		File prevPDF = new File(filePath);
-		if (prevPDF.exists()) {
-			prevPDF.delete();
-		}
-	}
 }
