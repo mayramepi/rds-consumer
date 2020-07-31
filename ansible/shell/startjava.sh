@@ -48,6 +48,7 @@ then
     echo "el puerto esta usado"
     exit;
 fi
+
 echo "port $PORT $JAVA_PORT"
 CMD="$JAVA_BIN -jar $DSERVER_PARAMS $JAVA_DEBUG $JAVA_STATS $JAVA_JAR $JAVA_PARAMS"
 echo $CMD
