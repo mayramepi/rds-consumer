@@ -4,7 +4,7 @@
 
     <groupId>ar.gob.recibosdesueldos</groupId>
     <artifactId>consumer</artifactId>
-    <version>00.00.01-RC3</version>
+    <version>00.00.01-RC4</version>
     <name>rds-consumer</name>
     <description>Consumer</description>
 

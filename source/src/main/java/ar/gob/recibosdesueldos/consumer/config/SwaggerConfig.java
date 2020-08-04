@@ -29,13 +29,7 @@ import java.util.List;
 public class SwaggerConfig {
     @Value("${app.version}")
     private String version;
-    @Bean
-    public LinkDiscoverers discoverers() {
-        List<LinkDiscoverer> plugins = new ArrayList<>();
-        plugins.add(new CollectionJsonLinkDiscoverer());
-        return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
 
-    }
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
