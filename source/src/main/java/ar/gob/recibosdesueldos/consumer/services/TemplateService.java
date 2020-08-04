@@ -8,6 +8,7 @@ import ar.gob.recibosdesueldos.commons.service.PlantillaService;
 import ar.gob.recibosdesueldos.consumer.dao.ConsumerDao;
 import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
 import ar.gob.recibosdesueldos.model.recibos.Recibo;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,10 +70,35 @@ public class TemplateService extends PlantillaService {
         uploadFilesTemplate(grupo, pathImg, pathTemplates, "", plantilla.getId(), template, header, signature, watermark);
         return plantilla;
     }
-    public void activarTemplate(Long idPlatinlla) throws CustomServiceException {
-        activarPlantilla(idPlatinlla);
-        //todo
+    public Plantilla activarTemplate(Long idPlatinlla) throws CustomServiceException {
+        Plantilla plantilla =activarPlantilla(idPlatinlla);
+        String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+        // antes de copiar borro las images que exitan
+        ar.gob.recibosdesueldos.commons.utils.FileUtils fileUtils= new ar.gob.recibosdesueldos.commons.utils.FileUtils();
+        fileUtils.deleteDirectoryOnlyFiles(new File(pathImg+codGrupo+"/"));
+        return copiarTemplatByIdPlantillaAndCodGrupo(idPlatinlla,pathImg,"");
     }
+    public Plantilla copiarTemplatByIdPlantillaAndCodGrupo(Long idPlatinlla,String destino,String prefijo) throws CustomServiceException {
+        try {
+            Plantilla plantilla =getById(idPlatinlla);
+            if(plantilla==null)
+                throw new CustomServiceException("No existe la plantila con id:"+idPlatinlla,HttpStatus.BAD_REQUEST);
+
+            String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+            //copio todas las images
+            File source = new File(pathImg+codGrupo+"/"+idPlatinlla+"/");
+            File dest = new File(destino+codGrupo+"/");
+            FileUtils.copyDirectory(source, dest);
+            //copio el archivo del template html
+            File templateHtml = new File(pathTemplates+idPlatinlla+"_recibo_"+ codGrupo + ".html");
+            final Path rootTemplate = Paths.get(pathTemplates);
+            Files.copy(templateHtml.toPath(), rootTemplate.resolve(prefijo+"recibo_" + codGrupo + ".html"), REPLACE_EXISTING);
+            return plantilla;
+        } catch (IOException e) {
+            throw new CustomServiceException("Error al copiar los archivos del template en : copiarTemplatByIdPlantillaAndCodGrupo", e.getCause());
+        }
+    }
+
     public void uploadTempFilesTemplate(String grupo,
                                         MultipartFile template,
                                         MultipartFile header,
@@ -165,7 +191,7 @@ public class TemplateService extends PlantillaService {
                 .map(Path::toFile)
                 .forEach(File::delete);
 
-        File templateTempFile = new File(pathTemplates + "\\_recibo_" + grupo.toUpperCase() + ".html");
+        File templateTempFile = new File(pathTemplates + "/_recibo_" + grupo.toUpperCase() + ".html");
         if (templateTempFile.exists()) {
             templateTempFile.delete();
         }
