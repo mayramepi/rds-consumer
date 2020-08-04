@@ -270,7 +270,7 @@ public class GeneratePDF {
          );
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
-
+		templateEngine.clearTemplateCacheFor(htmlTemplateName);
         pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss1, pathImg1+"/"+codigoGrupo+"/");
      }
 	private static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
