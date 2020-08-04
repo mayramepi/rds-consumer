@@ -165,7 +165,7 @@ public class TemplateService extends PlantillaService {
                 .map(Path::toFile)
                 .forEach(File::delete);
 
-        File templateTempFile = new File(pathTemplates + "\\_recibo_" + grupo.toUpperCase() + ".html");
+        File templateTempFile = new File(pathTemplates + "/_recibo_" + grupo.toUpperCase() + ".html");
         if (templateTempFile.exists()) {
             templateTempFile.delete();
         }
