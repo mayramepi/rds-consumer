@@ -13,6 +13,7 @@ import java.util.List;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestErrorResponse;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestResponse;
 import ar.gob.recibosdesueldos.commons.dto.request.GetAllPlantillasDto;
+import ar.gob.recibosdesueldos.commons.dto.response.PlantillaDto;
 import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
 import ar.gob.recibosdesueldos.commons.model.Plantilla;
@@ -106,6 +107,12 @@ public class GeneratePDFController {
 		);
         return new RestResponse<>(HttpStatus.OK,plantilla);
     }
+
+    @PostMapping(value = "/borrarCacheTemplates")
+    public RestResponse<Boolean> borrarCacheTemplates(){
+        generatePDF.borrarCacheTemplates();
+        return new RestResponse<>(HttpStatus.OK,true);
+    }
     @PostMapping(value = "/activarTemplate")
     public RestResponse<Plantilla> activarTemplate(@RequestParam("idPlantilla") long idPlantilla) throws CustomException {
         return new RestResponse<>(HttpStatus.OK,templateService.activarTemplate(idPlantilla));
@@ -177,17 +184,28 @@ public class GeneratePDFController {
                 .body(bFile);
     }
 
-    @ApiOperation(value = "getAllPlanillas")
-    @GetMapping("/getAllPlanillas")
-  //  @PreAuthorize("hasPermission('','BUSCAR_USURIO_FILTRO')")
-    public ResponseEntity<RestResponse<Page<Plantilla>>> getAllPlanillas(Pageable pageable, GetAllPlantillasDto request,
-                                                                         @ApiIgnore PagedResourcesAssembler assembler) throws CustomException {
+//    @ApiOperation(value = "getAllPlanillas")
+//    @GetMapping("/getAllPlanillas")
+//  //  @PreAuthorize("hasPermission('','BUSCAR_USURIO_FILTRO')")
+//    public ResponseEntity<RestResponse<Page<PlantillasDto>>> getAllPlanillas(Pageable pageable, GetAllPlantillasDto request,
+//                                                                         @ApiIgnore PagedResourcesAssembler assembler) throws CustomException {
+//
+//        Page<PlantillasDto> result = templateService.getAllPlantillas(pageable,request);
+//
+//        PagedModel pagedResources = assembler.toModel(result);
+//        return new ResponseEntity<>(new RestResponse<>(HttpStatus.OK, result), HttpStatus.OK);
+//
+//    }
 
-        Page<Plantilla> result = templateService.getAllPlantillas(pageable,request);
+    @ApiOperation(value = "getAllPlantillasByGrupoId")
+    @GetMapping("/getAllPlantillasByGrupoId")
+    //  @PreAuthorize("hasPermission('','BUSCAR_USURIO_FILTRO')")
+    public ResponseEntity<RestResponse<List<PlantillaDto>>> getAllPlantillasByGrupoId(@RequestParam("idGrupo") long idGrupo) throws CustomException {
 
-        PagedModel pagedResources = assembler.toModel(result);
+        List<PlantillaDto> result = templateService.getAllPlantillasByGrupoId(idGrupo);
+
+    //    PagedModel pagedResources = assembler.toModel(result);
         return new ResponseEntity<>(new RestResponse<>(HttpStatus.OK, result), HttpStatus.OK);
 
     }
-
 }

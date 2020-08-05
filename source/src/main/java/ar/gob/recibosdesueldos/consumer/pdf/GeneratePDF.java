@@ -81,6 +81,10 @@ public class GeneratePDF {
     private boolean ponerMarca = false;
 
     private static SimpleDateFormat fileDateFormatNumRef = new SimpleDateFormat("dd/MM/yyyy");
+	public void borrarCacheTemplates(){
+		templateEngine.clearTemplateCache();
+
+	}
 
     public void createPDF(PlantillaPDF plantillaPDF,String dirTemp,String dirFinal) throws IOException, DocumentException {
         Map<String, Object> variables = new HashMap<>();

@@ -4,6 +4,7 @@ import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
 import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.commons.service.LoteService;
 import ar.gob.recibosdesueldos.commons.service.PlantillaService;
 import ar.gob.recibosdesueldos.consumer.dao.ConsumerDao;
 import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
@@ -56,6 +57,10 @@ public class TemplateService extends PlantillaService {
     @Qualifier("generatePDF")
     private GeneratePDF generatePDF;
 
+    @Autowired
+    @Qualifier("loteService")
+    private LoteService loteService;
+
     @Value("${app.out_dir_temp}")
     private String tempDir;
 
@@ -66,11 +71,16 @@ public class TemplateService extends PlantillaService {
                                  MultipartFile signature,
                                  MultipartFile watermark) throws IOException, CustomException {
         Plantilla plantilla = create(grupo, descripcionPlantilla);
-        //	uploadFilesTemplate( grupo,pathImg,pathTemplates,plantilla.getId().toString()+"_",template,header,signature,watermark);
+
+        if(loteService.existLoteGenerandoPdf())
+            throw new CustomServiceException("No se puede crear un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
+
         uploadFilesTemplate(grupo, pathImg, pathTemplates, "", plantilla.getId(), template, header, signature, watermark);
         return plantilla;
     }
     public Plantilla activarTemplate(Long idPlatinlla) throws CustomServiceException {
+        if(loteService.existLoteGenerandoPdf())
+            throw new CustomServiceException("No se puede activar un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
         Plantilla plantilla =activarPlantilla(idPlatinlla);
         String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
         // antes de copiar borro las images que exitan
@@ -98,7 +108,14 @@ public class TemplateService extends PlantillaService {
             throw new CustomServiceException("Error al copiar los archivos del template en : copiarTemplatByIdPlantillaAndCodGrupo", e.getCause());
         }
     }
-
+//    public byte[] getTemplateImagesZipByIdPlantilla(Long idPlatinlla) throws CustomServiceException {
+//        Plantilla plantilla =getById(idPlatinlla);
+//        if(plantilla==null)
+//            throw new CustomServiceException("No existe la plantila con id:"+idPlatinlla,HttpStatus.BAD_REQUEST);
+//        String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+//        //File imageDir = new Path(pathImg+codGrupo+"/"+idPlatinlla+"/");
+//
+//    }
     public void uploadTempFilesTemplate(String grupo,
                                         MultipartFile template,
                                         MultipartFile header,
@@ -170,16 +187,6 @@ public class TemplateService extends PlantillaService {
         }
     }
 
-    public void borraImagesTemplateFiles(Long idTemplate) throws IOException {
-        final Path TEMP_DIRECTORY = Paths.get(pathImg);
-
-//		Path pathToBeDeleted = TEMP_DIRECTORY.resolve(idTemplate.);
-//
-//		Files.walk(pathToBeDeleted)
-//				.sorted(Comparator.reverseOrder())
-//				.map(Path::toFile)
-//				.forEach(File::delete);
-    }
 
     public void borraTempTemplatesFiles(String grupo) throws IOException {
         final Path TEMP_DIRECTORY = Paths.get(pathImg);
