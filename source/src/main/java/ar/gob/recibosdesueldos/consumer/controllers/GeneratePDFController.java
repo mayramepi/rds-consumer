@@ -184,6 +184,37 @@ public class GeneratePDFController {
                 .body(bFile);
     }
 
+    @PostMapping(value = "/dercargarImagenesByIdPlantilla" )
+    public ResponseEntity<?> dercargarImagenesByIdPlantilla(
+            @RequestParam("idPlantilla") long idPlantilla) throws  CustomServiceException {
+
+        byte[] bFile=templateService.getTemplateImagesZipByIdPlantilla(idPlantilla);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=imagenesPlantilla"+idPlantilla+".zip");
+
+        return (ResponseEntity<byte[]>) ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(bFile);
+    }
+    @PostMapping(value = "/dercargarArchivosTemplateByIdPlantilla" )
+    public ResponseEntity<?> dercargarArchivosTemplateByIdPlantilla(
+            @RequestParam("idPlantilla") long idPlantilla) throws  CustomServiceException {
+
+        byte[] bFile=templateService.getTemplateZipByIdPlantilla(idPlantilla);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=archivosPlantilla"+idPlantilla+".zip");
+
+        return (ResponseEntity<byte[]>) ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(bFile);
+    }
+
 //    @ApiOperation(value = "getAllPlanillas")
 //    @GetMapping("/getAllPlanillas")
 //  //  @PreAuthorize("hasPermission('','BUSCAR_USURIO_FILTRO')")
