@@ -129,8 +129,8 @@ public class GeneratePDF {
         for (DetalleRecibo detalleRecibo : plantillaPDF.getRecibo().getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
         	detalleHtml.setConcepto(detalleRecibo.getConcepto());
-			if(detalleHtml.getConcepto().length()>28)
-				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,28));
+			if(detalleHtml.getConcepto().length()>25)
+				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,25));
         	if(detalleRecibo.getImporte().compareTo(BigDecimal.valueOf(0)) == 0) {
         		detalleHtml.setImporte("");
         	}else {
@@ -225,8 +225,8 @@ public class GeneratePDF {
         for (DetalleRecibo detalleRecibo : recibo.getDetalles()) {
         	DetalleReciboForHtml detalleHtml = new DetalleReciboForHtml();
 			detalleHtml.setConcepto(detalleRecibo.getConcepto());
-			if(detalleHtml.getConcepto().length()>28)
-				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,28));
+			if(detalleHtml.getConcepto().length()>25)
+				detalleHtml.setConcepto(detalleHtml.getConcepto().substring(0,25));
 
          	if(detalleRecibo.getImporte().compareTo(BigDecimal.valueOf(0)) == 0) {
          		detalleHtml.setImporte("");
