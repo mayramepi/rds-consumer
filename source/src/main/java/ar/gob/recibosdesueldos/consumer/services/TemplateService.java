@@ -4,11 +4,14 @@ import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
 import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.commons.service.LoteService;
 import ar.gob.recibosdesueldos.commons.service.PlantillaService;
 import ar.gob.recibosdesueldos.consumer.dao.ConsumerDao;
 import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
 import ar.gob.recibosdesueldos.model.recibos.Recibo;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +19,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -55,6 +63,10 @@ public class TemplateService extends PlantillaService {
     @Qualifier("generatePDF")
     private GeneratePDF generatePDF;
 
+    @Autowired
+    @Qualifier("loteService")
+    private LoteService loteService;
+
     @Value("${app.out_dir_temp}")
     private String tempDir;
 
@@ -65,13 +77,85 @@ public class TemplateService extends PlantillaService {
                                  MultipartFile signature,
                                  MultipartFile watermark) throws IOException, CustomException {
         Plantilla plantilla = create(grupo, descripcionPlantilla);
-        //	uploadFilesTemplate( grupo,pathImg,pathTemplates,plantilla.getId().toString()+"_",template,header,signature,watermark);
+
+        if(loteService.existLoteGenerandoPdf())
+            throw new CustomServiceException("No se puede crear un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
+
         uploadFilesTemplate(grupo, pathImg, pathTemplates, "", plantilla.getId(), template, header, signature, watermark);
         return plantilla;
     }
-    public void activarTemplate(Long idPlatinlla) throws CustomServiceException {
-        activarPlantilla(idPlatinlla);
-        //todo
+    public Plantilla activarTemplate(Long idPlatinlla) throws CustomServiceException {
+        if(loteService.existLoteGenerandoPdf())
+            throw new CustomServiceException("No se puede activar un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
+        Plantilla plantilla =activarPlantilla(idPlatinlla);
+        String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+        // antes de copiar borro las images que exitan
+        ar.gob.recibosdesueldos.commons.utils.FileUtils fileUtils= new ar.gob.recibosdesueldos.commons.utils.FileUtils();
+        fileUtils.deleteDirectoryOnlyFiles(new File(pathImg+codGrupo+"/"));
+        return copiarTemplatByIdPlantillaAndCodGrupo(idPlatinlla,pathImg,"");
+    }
+    public Plantilla copiarTemplatByIdPlantillaAndCodGrupo(Long idPlatinlla,String destino,String prefijo) throws CustomServiceException {
+        try {
+            Plantilla plantilla =getById(idPlatinlla);
+            if(plantilla==null)
+                throw new CustomServiceException("No existe la plantila con id:"+idPlatinlla,HttpStatus.BAD_REQUEST);
+
+            String codGrupo=plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+            //copio todas las images
+            File source = new File(pathImg+codGrupo+"/"+idPlatinlla+"/");
+            File dest = new File(destino+codGrupo+"/");
+            FileUtils.copyDirectory(source, dest);
+            //copio el archivo del template html
+            File templateHtml = new File(pathTemplates+idPlatinlla+"_recibo_"+ codGrupo + ".html");
+            final Path rootTemplate = Paths.get(pathTemplates);
+            Files.copy(templateHtml.toPath(), rootTemplate.resolve(prefijo+"recibo_" + codGrupo + ".html"), REPLACE_EXISTING);
+            return plantilla;
+        } catch (IOException e) {
+            throw new CustomServiceException("Error al copiar los archivos del template en : copiarTemplatByIdPlantillaAndCodGrupo", e.getCause());
+        }
+    }
+    public byte[] getTemplateImagesZipByIdPlantilla(Long idPlatinlla) throws CustomServiceException {
+        Path rootTemplate=null;
+        Plantilla plantilla = getById(idPlatinlla);
+        if (plantilla == null)
+                throw new CustomServiceException("No existe la plantila con id:" + idPlatinlla, HttpStatus.BAD_REQUEST);
+        try {    String codGrupo = plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+            rootTemplate = Paths.get(pathImg + codGrupo + "/" + idPlatinlla + "/");
+        } catch (Exception e) {
+            throw new CustomServiceException("Error interno en getTemplateImagesZipByIdPlantilla.", e.getCause());
+        }
+        try {
+            return ar.gob.recibosdesueldos.commons.utils.FileUtils.comprimirEnMemoria(rootTemplate);
+        } catch (Exception e) {
+            throw new CustomServiceException("Error al comprimir los archivos en getTemplateImagesZipByIdPlantilla.", e.getCause());
+        }
+    }
+    public byte[] getTemplateZipByIdPlantilla(Long idPlatinlla) throws CustomServiceException {
+        Path rootTemplate=null;
+        Plantilla plantilla = getById(idPlatinlla);
+        if (plantilla == null)
+            throw new CustomServiceException("No existe la plantila con id:" + idPlatinlla, HttpStatus.BAD_REQUEST);
+        try {    String codGrupo = plantilla.getGrupos().get(0).getGrupo().getCodGrupo();
+            //busco archivos
+            rootTemplate = Paths.get(pathImg + codGrupo + "/" + idPlatinlla + "/");
+            List<File> archivos=ar.gob.recibosdesueldos.commons.utils.FileUtils.getListFilesFromDirectory(rootTemplate);
+            archivos.add(new File(pathTemplates+idPlatinlla+"_recibo_"+ codGrupo + ".html"));
+            archivos.add(new File(pathCss));
+
+            //Los comprimo
+            Path zipFile=ar.gob.recibosdesueldos.commons.utils.FileUtils.zipArchivos(archivos);
+
+            //borro temporales
+            final InputStream targetStream = new FileInputStream(zipFile.toFile());
+            byte[] bytes = IOUtils.toByteArray(targetStream);
+            targetStream.close();
+            FileSystemUtils.deleteRecursively(zipFile);
+
+            return bytes;
+
+        } catch (Exception e) {
+            throw new CustomServiceException("Error interno en getTemplateImagesZipByIdPlantilla.", e.getCause());
+        }
     }
     public void uploadTempFilesTemplate(String grupo,
                                         MultipartFile template,
@@ -144,16 +228,6 @@ public class TemplateService extends PlantillaService {
         }
     }
 
-    public void borraImagesTemplateFiles(Long idTemplate) throws IOException {
-        final Path TEMP_DIRECTORY = Paths.get(pathImg);
-
-//		Path pathToBeDeleted = TEMP_DIRECTORY.resolve(idTemplate.);
-//
-//		Files.walk(pathToBeDeleted)
-//				.sorted(Comparator.reverseOrder())
-//				.map(Path::toFile)
-//				.forEach(File::delete);
-    }
 
     public void borraTempTemplatesFiles(String grupo) throws IOException {
         final Path TEMP_DIRECTORY = Paths.get(pathImg);
