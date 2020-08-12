@@ -23,9 +23,9 @@ export JRE_HOME=/usr/lib/jvm/jre
 export M2=$M2_HOME/bin
 export PATH=$M2:$PATH
 export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
-#rm -frv rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/consumer/
-#rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/logging/
-#rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/model/
+rm -frv rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/consumer/
+rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/logging/
+rm -frv /root/.m2/repository/ar/gob/recibosdesueldos/model/
  ../ansible/shell/compile.sh
 ../ansible/shell/stopjava.sh
 ../ansible/shell/startjava.sh
