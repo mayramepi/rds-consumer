@@ -1,0 +1,66 @@
+---
+- name: INSTALLATION
+  hosts: "{{ env }}"
+  become: True
+  tasks:
+
+    ## VERIFICACION DE LA EXISTENCIA DEL DIRECTORIO
+    - name: FIND "{{ path }}/{{ folder }}" FOLDER
+      stat:
+        path: "{{ path }}/{{ folder }}"
+      register: ifExists
+
+    ## ELIMINA EL DIRECTORIO AL EXISTIR
+    - name: Clean artifact path
+      file:
+        state: absent
+        path: "{{ path }}/{{ folder }}"
+      when: ifExists.stat.islnk is defined
+
+    ## CLONANDO DEL REPO
+    - name: GIT CLONE => "{{ repository }}"
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ path }}/{{ folder }}"
+        version: "{{ branch }}"
+
+    ## VERIFICACION DE QUE SE CLONÓ EL PROYECTO EN EL DIRECTORIO INDICADO
+    - name: FIND "{{ path }}/{{ folder }}" FOLDER
+      stat:
+        path: "{{ path }}/{{ folder }}"
+      register: sym
+
+    ## MENSAJE DE ERROR AL NO CLONARSE DEL REPO
+    - fail:
+        msg: "{{ path }}/{{ folder }} isn't defined (path doesn't exist)"
+      when: sym.stat.islnk is not defined
+
+    ## INFO DEL QUE SE CLONÓ EXITOSAMENTE DEL REPO
+    - debug:
+        msg: "{{ path }}/{{ folder }} is defined"
+      when: sym.stat.islnk is defined
+
+    ## FETCH DE TODOS LOS TAGS
+    - name: FETCHING TAGS FROM REMOTE
+      shell: "git fetch --tags"
+      args:
+        chdir: "{{ path }}/{{ folder }}"
+      ## GIT CHECKOUT DEL ULTIMO TAG CREADO, SI EL PARAMETRO TAG NO ESTA DEFINIDO
+    - name: GIT CHECKOUT TAG => "{{ tag }}"
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ path }}/{{ folder }}"
+        version: "{{ tag }}"
+      when: tag is defined
+
+
+    ## PERMISOS DE EJECUCION A LOS ARCHIVOS SHELL
+    - name: GIVING EXECUTION PERMISSION TO SHELL FILES
+      file:
+        path: "{{ path }}/{{ folder }}/ansible/shell/"
+        state: directory
+        mode: u=rwx
+        recurse: yes
+    - name: CONFIGURING THE APPLICATION
+      shell: "{{ path }}/{{ folder }}/ansible/shell/config-app.sh {{ path }}/{{ folder }} {{ db_user }} {{ db_pass }} {{db_host}} {{db_servicename}} {{db_port}}"
+

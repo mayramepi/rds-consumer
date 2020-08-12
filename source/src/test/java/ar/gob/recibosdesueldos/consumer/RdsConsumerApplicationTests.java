@@ -41,26 +41,26 @@ class RdsConsumerApplicationTests {
 //       	Recibo reciboISSP=this.setRecibo(Constantes.ISSP);
 //    	Recibo reciboIVC=this.setRecibo(Constantes.IVC);
 //    	Recibo reciboPDC=this.setRecibo(Constantes.PDC);
-    	
+
        	listaRecibos.add(reciboGCBA);
 //       	listaRecibos.add(reciboBOMBEROS);
 //       	listaRecibos.add(reciboISSP);
 //       	listaRecibos.add(reciboIVC);
 //    	listaRecibos.add(reciboPDC);
        	for (Recibo recibo : listaRecibos) {
-			
+
        		this.send(recibo,queue);
 		}
-    } 
+    }
 
 
     private void send(Recibo recibo,Queue queue ) {
-    	
+
     	jmsTemplate.convertAndSend(queue, recibo);
     }
-    
+
     private DetalleRecibo setDetalle(DetalleRecibo detalle, Long idDetalle, String tipo, String concepto,BigDecimal importe, BigDecimal ajuste, Long ordenTipo) {
-    	
+
     	detalle.setIdDetalle(idDetalle);
     	detalle.setTipo(tipo);
     	detalle.setConcepto(concepto);
@@ -69,7 +69,7 @@ class RdsConsumerApplicationTests {
     	detalle.setOrdenTipo(ordenTipo);
     	return detalle;
     }
-    
+
     private Recibo setRecibo(String codigoGrupo) {
         DetalleRecibo detalle1 = new DetalleRecibo();
         DetalleRecibo detalle2 = new DetalleRecibo();
@@ -80,7 +80,7 @@ class RdsConsumerApplicationTests {
         this.setDetalle(detalle1, Long.valueOf("1"), "ASIG", "haberes1", BigDecimal.valueOf(111.00), BigDecimal.valueOf(11.00), Long.valueOf("1"));
         this.setDetalle(detalle2, Long.valueOf("2"), "ASIG", "haberes2", BigDecimal.valueOf(0), BigDecimal.valueOf(0.00), Long.valueOf("2"));
         this.setDetalle(detalle3, Long.valueOf("3"), "ASIG", "haberes3", BigDecimal.valueOf(113.03), BigDecimal.valueOf(13.03), Long.valueOf("3"));
-       
+
         this.setDetalle(detalle4, Long.valueOf("4"), "DESC", "descuento1", BigDecimal.valueOf(100.00), BigDecimal.valueOf(0), Long.valueOf("4"));
         this.setDetalle(detalle5, Long.valueOf("5"), "DESC", "descuento2", BigDecimal.valueOf(115.05), BigDecimal.valueOf(0), Long.valueOf("5"));
         this.setDetalle(detalle6, Long.valueOf("6"), "DESC", "descuento3", BigDecimal.valueOf(116.06), BigDecimal.valueOf(16.06), Long.valueOf("6"));
@@ -116,9 +116,9 @@ class RdsConsumerApplicationTests {
         recibo.setFicha("Ficha");
         recibo.setNumeroComprobante("123456");
         recibo.setAntiguedad("4 meses");
-        
+
         recibo.setFechaIngreso(new Date());
         return recibo;
-    	
+
     }
 }

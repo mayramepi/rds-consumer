@@ -1,0 +1,37 @@
+
+declare -x JAVA_JAR=`find ./target -name *.jar`
+declare -x JAVA_BIN=java
+declare -x DATABASE_NUMBER=2
+
+declare -x DB_USERNAME="CONFIG_USER"
+declare -x DB_PASSWORD="CONFIG_PASS"
+declare -x DB_HOST="CONFIG_HOST"
+declare -x DB_SERVICE_NAME="CONFIG_SERVICE_NAME"
+declare -x DB_PORT="CONFIG_PORT"
+echo "Iniciando java con datasource:"
+echo "USERNAME "$DB_USERNAME
+echo "PASSWORD" $DB_PASSWORD
+echo "URL" "jdbc:oracle:thin:@"$DB_HOST:$DB_PORT/$DB_SERVICE_NAME
+echo "iniciando...."
+
+declare -x FLYWAY=false
+declare -x MIGRATE=false
+declare -x JAVA_PORT="8085"
+declare -x DEBUG_PORT="4000"
+declare -x STATS_REMOTE_PORT="3333"
+declare -x STATS_ADDRESS="5006"
+declare -x JAVA_DEBUG=""
+declare -x JAVA_STATS=""
+declare -x PORT="$JAVA_PORT"
+declare -x JAVA_PARAMS="--spring.profiles.active=openshift"
+declare -x APP_OUT_DIR="/var/rds/" 
+declare -x APP_TEM_DIR="/tmp"
+declare -x APP_PREVIEW_DIR="/var/rds/preview"
+declare -x APP_TEMPLATES_DIR="/var/rds/rds-templates"
+declare  -x DSERVER_PARAMS="-Dserver.port=8085"
+#declare -x SEGURIDAD_VALIDACAPTCHA="false"
+#declare -x SEGURIDAD_CHEQUEO="false"
+#declare -x CHECKAD="false"
+#declare -x BRANCH=`git status|grep -w "On branch\|En la rama" |cut -d " " -f4`
+echo " branch ----> $BRANCH"
+

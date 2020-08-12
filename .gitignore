@@ -32,3 +32,6 @@ build/
 
 
 \.metadata/
+config.sh
+conector.sh
+*.out
