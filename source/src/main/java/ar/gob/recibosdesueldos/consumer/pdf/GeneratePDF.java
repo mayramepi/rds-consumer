@@ -173,7 +173,7 @@ public class GeneratePDF {
         		cuil + "-" +
         		cuil + "_" +
         		plantillaPDF.getRecibo().getPeriodoAnio() + String.format("%02d", RdsUtils.getInstance().monthStringToMonthInt(plantillaPDF.getRecibo().getPeriodoMes())) + "_" +
-        		plantillaPDF.getRecibo().getIdRecibo()
+        		plantillaPDF.getRecibo().getIdRecibo()+"_"+plantillaPDF.getRecibo().getIdLote()
         );
 
         HtmlToPdf pdfFinal = new HtmlToPdf();

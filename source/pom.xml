@@ -42,7 +42,7 @@
         <swagger.version>2.9.2</swagger.version>
         <model.version>00.00.01-RC4</model.version>
         <commons.version>00.00.01-RC7</commons.version>
-        <logging.version>00.00.01-RC2</logging.version>
+        <logging.version>00.00.02-RC0</logging.version>
     </properties>
 
 
@@ -63,7 +63,6 @@
             <artifactId>logging</artifactId>
             <version>${logging.version}</version>
         </dependency>
-
 
 
         <dependency>
@@ -162,6 +161,10 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+
+
+
+
     </dependencies>
 
     <build>

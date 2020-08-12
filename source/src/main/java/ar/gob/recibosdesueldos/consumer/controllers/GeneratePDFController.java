@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import ar.gob.recibosdesueldos.commons.dto.generic.RestErrorResponse;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestResponse;
@@ -18,10 +20,12 @@ import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
 import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.consumer.scheduler.ScheduledTasks;
 import ar.gob.recibosdesueldos.consumer.services.TemplateService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,15 +47,19 @@ import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
 import ar.gob.recibosdesueldos.consumer.services.GeneratePDFService;
 import ar.gob.recibosdesueldos.model.messaging.Recibo;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.HEAD})
 
 public class GeneratePDFController {
-    
-	@Autowired
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTasks.class);
+    private static final Logger log = LoggerFactory.getLogger("MyApplication");
+
+    @Autowired
     private GeneratePDFService generatePDFService;
 
 	@Autowired
@@ -110,7 +118,11 @@ public class GeneratePDFController {
 
     @PostMapping(value = "/borrarCacheTemplates")
     public RestResponse<Boolean> borrarCacheTemplates(){
+        String response = "Borrando cache de templates" + new Date();
+        LOGGER.info(response);
         generatePDF.borrarCacheTemplates();
+
+
         return new RestResponse<>(HttpStatus.OK,true);
     }
     @PostMapping(value = "/activarTemplate")
