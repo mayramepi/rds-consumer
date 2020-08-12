@@ -36,6 +36,13 @@
         </repository>
     </repositories>
 
+    <scm>
+        <connection>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</connection>
+        <developerConnection>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</developerConnection>
+        <url>scm:git:https://repositorio-ce-asi.buenosaires.gob.ar/reingenieria-recibos-sueldo/${name}.git</url>
+      <tag>HEAD</tag>
+  </scm>
+
     <properties>
         <java.version>1.8</java.version>
         <itext.version>5.5.13.1</itext.version>
