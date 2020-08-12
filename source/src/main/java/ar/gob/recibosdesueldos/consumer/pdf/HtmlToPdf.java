@@ -47,7 +47,7 @@ public class HtmlToPdf {
 
 	public void parseoHtmlPdf(TemplateEngine templateEngine, Map<String, Object> variables,
 			ResourceLoader resourceLoader, String htmlTemplateName, String dirTemp, String dirFinal, boolean ponerMarca,
-			String pathCss, String pathImg) {
+			String pathCss, String pathImg) throws IOException, DocumentException {
 
 		try {
 			dirTemp=dirTemp+"/";
@@ -116,8 +116,10 @@ public class HtmlToPdf {
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			throw  e1;
 		} catch (DocumentException e1) {
 			e1.printStackTrace();
+			throw  e1;
 		}
 
 	}

@@ -76,10 +76,11 @@ public class TemplateService extends PlantillaService {
                                  MultipartFile header,
                                  MultipartFile signature,
                                  MultipartFile watermark) throws IOException, CustomException {
-        Plantilla plantilla = create(grupo, descripcionPlantilla);
 
         if(loteService.existLoteGenerandoPdf())
             throw new CustomServiceException("No se puede crear un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
+
+        Plantilla plantilla = create(grupo, descripcionPlantilla);
 
         uploadFilesTemplate(grupo, pathImg, pathTemplates, "", plantilla.getId(), template, header, signature, watermark);
         return plantilla;
