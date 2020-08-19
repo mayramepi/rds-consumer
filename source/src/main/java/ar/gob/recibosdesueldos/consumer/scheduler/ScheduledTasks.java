@@ -27,10 +27,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "${chequeoBorradoTemplates:0 0/15 * * * ?}")
     private void chequeoBorradoTemplates() {
-        String orderId3 = "99999999";
-        MDC.put("orderId", orderId3);
         LOGGER.info("Iniciando ScheduledTasks: chequeoBorradoTemplates a las:"+new Date().toString());
-        MDC.remove("orderId");
         generatePDF.borrarCacheTemplates();
     }
 }
