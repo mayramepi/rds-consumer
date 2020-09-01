@@ -193,7 +193,7 @@ public class TemplateService extends PlantillaService {
         if (!signature.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
             throw new CustomException("El archivo de la firma" + signature.getOriginalFilename() + " no es del tipo image/gif o image/jpeg'", HttpStatus.BAD_REQUEST);
         }
-        if (!watermark.getContentType().equals("image/gif")) {
+        if (watermark!=null && !watermark.getContentType().equals("image/gif")) {
             throw new CustomException("El el archivo de la marca de agua " + watermark.getOriginalFilename() + " no es del tipo image/gif '", HttpStatus.BAD_REQUEST);
         }
 
@@ -210,8 +210,18 @@ public class TemplateService extends PlantillaService {
             Files.copy(header.getInputStream(), rootImg.resolve(grupo + "/" + header.getOriginalFilename()), REPLACE_EXISTING);
         if (signature != null && !signature.isEmpty())
             Files.copy(signature.getInputStream(), rootImg.resolve(grupo + "/" + signature.getOriginalFilename()), REPLACE_EXISTING);
-        if (watermark != null && !watermark.isEmpty())
+        if (watermark != null && !watermark.isEmpty()) {
             Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
+        }else{ // si no mandan la marca de agua, se borra la que existia
+            File watermarkExistente = new File(pathImg + grupo.toUpperCase());
+            if (watermarkExistente.exists()) {
+                File[] files = watermarkExistente.listFiles();
+                for (File file:files) {
+                    if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + "."))
+                        file.delete();
+                }
+            }
+        }
         if (idPlantilla != null) {
             imDir = new File(pathImg + grupo + "/" + idPlantilla);
             if (!imDir.exists()) {
@@ -225,7 +235,14 @@ public class TemplateService extends PlantillaService {
                 Files.copy(signature.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + signature.getOriginalFilename()), REPLACE_EXISTING);
             if (watermark != null && !watermark.isEmpty())
                 Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
-
+                File watermarkExistente = new File(pathImg + grupo.toUpperCase()+"/" + idPlantilla);
+                if (watermarkExistente.exists()) {
+                    File[] files = watermarkExistente.listFiles();
+                    for (File file:files) {
+                        if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + "."))
+                            file.delete();
+                    }
+                }
         }
     }
 

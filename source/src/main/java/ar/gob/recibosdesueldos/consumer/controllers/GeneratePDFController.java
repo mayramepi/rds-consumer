@@ -111,7 +111,7 @@ public class GeneratePDFController {
                                               @RequestParam("template") MultipartFile template,
                                               @RequestParam("header") MultipartFile header,
                                               @RequestParam("signature") MultipartFile signature,
-                                              @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
+                                              @RequestParam(value = "watermark",required = false) MultipartFile watermark) throws IOException, DocumentException, CustomException {
         Plantilla plantilla =templateService.generateTemplate(
                 codigoGrupo.toUpperCase(),
                 descripcionPlantilla,
@@ -148,17 +148,19 @@ public class GeneratePDFController {
                                             @RequestParam("template") MultipartFile template,
                                             @RequestParam("header") MultipartFile header,
                                             @RequestParam("signature") MultipartFile signature,
-                                            @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
+                                            @RequestParam(value = "watermark",required = false) MultipartFile watermark) throws IOException, DocumentException, CustomException {
 
 
 
 
         try {
+            templateService.borraTempTemplatesFiles(codigoGrupo);
             templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    	this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
+
+        this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
 
         String filePath = previewDir+"/8-20266221488-20266221488_2020null_0.pdf";
 

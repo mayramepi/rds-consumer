@@ -151,18 +151,25 @@ public class GeneratePDF {
         	}
 
 		}
-
-        if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
-			ponerMarca=marcaGcba;
-		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
-			ponerMarca=marcaBoberos;
-		}else if(Constantes.IVC.equalsIgnoreCase(codigoGrupo)){
-			ponerMarca=marcaIvc;
-		}else if(Constantes.PDC.equalsIgnoreCase(codigoGrupo)){
-			ponerMarca=marcaPdc;
-		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
-			ponerMarca=marcaIssp;
+		File watermarkExistente = new File(pathImg + codigoGrupo.toUpperCase());
+		if (watermarkExistente.exists()) {
+			File[] files = watermarkExistente.listFiles();
+			for (File file:files) {
+				if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + codigoGrupo.toUpperCase() + "."))
+					ponerMarca=true;
+			}
 		}
+//        if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
+//			ponerMarca=marcaGcba;
+//		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
+//			ponerMarca=marcaBoberos;
+//		}else if(Constantes.IVC.equalsIgnoreCase(codigoGrupo)){
+//			ponerMarca=marcaIvc;
+//		}else if(Constantes.PDC.equalsIgnoreCase(codigoGrupo)){
+//			ponerMarca=marcaPdc;
+//		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
+//			ponerMarca=marcaIssp;
+//		}
 
         String cuil = plantillaPDF.getRecibo().getCuit().replace("-", "").trim();
 
@@ -249,17 +256,26 @@ public class GeneratePDF {
 
  		}
 
-        if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
- 			ponerMarca=marcaGcba;
- 		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
- 			ponerMarca=marcaBoberos;
- 		}else if(Constantes.IVC.equalsIgnoreCase(codigoGrupo)){
- 			ponerMarca=marcaIvc;
- 		}else if(Constantes.PDC.equalsIgnoreCase(codigoGrupo)){
- 			ponerMarca=marcaPdc;
- 		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
- 			ponerMarca=marcaIssp;
- 		}
+		File watermarkExistente = new File(pathImg1 + codigoGrupo.toUpperCase());
+		if (watermarkExistente.exists()) {
+			File[] files = watermarkExistente.listFiles();
+			for (File file:files) {
+				if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + codigoGrupo.toUpperCase() + "."))
+					ponerMarca=true;
+			}
+		}
+
+//        if(Constantes.GCBA.equalsIgnoreCase(codigoGrupo)){
+// 			ponerMarca=marcaGcba;
+// 		}else if(Constantes.BOMBEROS.equalsIgnoreCase(codigoGrupo)){
+// 			ponerMarca=marcaBoberos;
+// 		}else if(Constantes.IVC.equalsIgnoreCase(codigoGrupo)){
+// 			ponerMarca=marcaIvc;
+// 		}else if(Constantes.PDC.equalsIgnoreCase(codigoGrupo)){
+// 			ponerMarca=marcaPdc;
+// 		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
+// 			ponerMarca=marcaIssp;
+// 		}
 
         String cuil = recibo.getCuit().replace("-", "").trim();
 
