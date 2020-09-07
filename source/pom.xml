@@ -2,9 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
     <groupId>ar.gob.recibosdesueldos</groupId>
     <artifactId>consumer</artifactId>
-    <version>00.00.01-RC4</version>
+    <version>00.00.02-RC0</version>
     <name>rds-consumer</name>
     <description>Consumer</description>
 
@@ -48,8 +49,8 @@
         <itext.version>5.5.13.1</itext.version>
         <swagger.version>2.9.2</swagger.version>
         <model.version>00.00.01-RC4</model.version>
-        <commons.version>00.00.01-RC7</commons.version>
-        <logging.version>00.00.01-RC2</logging.version>
+        <commons.version>00.00.02-RC0</commons.version>
+        <logging.version>00.00.02-RC0</logging.version>
     </properties>
 
 
@@ -70,7 +71,6 @@
             <artifactId>logging</artifactId>
             <version>${logging.version}</version>
         </dependency>
-
 
 
         <dependency>
@@ -169,6 +169,10 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+
+
+
+
     </dependencies>
 
     <build>

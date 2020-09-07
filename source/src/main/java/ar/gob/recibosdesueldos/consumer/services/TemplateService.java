@@ -8,10 +8,13 @@ import ar.gob.recibosdesueldos.commons.service.LoteService;
 import ar.gob.recibosdesueldos.commons.service.PlantillaService;
 import ar.gob.recibosdesueldos.consumer.dao.ConsumerDao;
 import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
+import ar.gob.recibosdesueldos.consumer.scheduler.ScheduledTasks;
 import ar.gob.recibosdesueldos.model.recibos.Recibo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +41,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @Service("templateService")
 @Transactional(propagation = Propagation.REQUIRED)
 public class TemplateService extends PlantillaService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
+
     @Value("${app.preview_dir}")
     private String pathPreview;
 
@@ -76,10 +81,11 @@ public class TemplateService extends PlantillaService {
                                  MultipartFile header,
                                  MultipartFile signature,
                                  MultipartFile watermark) throws IOException, CustomException {
-        Plantilla plantilla = create(grupo, descripcionPlantilla);
 
         if(loteService.existLoteGenerandoPdf())
             throw new CustomServiceException("No se puede crear un template mientras exista una ejecución en proceso.",HttpStatus.CONFLICT);
+
+        Plantilla plantilla = create(grupo, descripcionPlantilla);
 
         uploadFilesTemplate(grupo, pathImg, pathTemplates, "", plantilla.getId(), template, header, signature, watermark);
         return plantilla;
@@ -192,7 +198,7 @@ public class TemplateService extends PlantillaService {
         if (!signature.getContentType().equals("image/gif") && !signature.getContentType().equals("image/jpeg")) {
             throw new CustomException("El archivo de la firma" + signature.getOriginalFilename() + " no es del tipo image/gif o image/jpeg'", HttpStatus.BAD_REQUEST);
         }
-        if (!watermark.getContentType().equals("image/gif")) {
+        if (watermark != null && !watermark.getContentType().equals("image/gif")) {
             throw new CustomException("El el archivo de la marca de agua " + watermark.getOriginalFilename() + " no es del tipo image/gif '", HttpStatus.BAD_REQUEST);
         }
 
@@ -203,14 +209,34 @@ public class TemplateService extends PlantillaService {
 
         final Path rootTemplate = Paths.get(pathTemplates);
         final Path rootImg = Paths.get(pathImg);
-        if (template != null && !template.isEmpty())
+        if (template != null && !template.isEmpty()) {
             Files.copy(template.getInputStream(), rootTemplate.resolve(prefijoTemplate + "recibo_" + grupo.toUpperCase() + ".html"), REPLACE_EXISTING);
-        if (header != null && !header.isEmpty())
+            LOGGER.info("Subido template:" + rootTemplate.resolve(prefijoTemplate + "recibo_" + grupo.toUpperCase() + ".html"));
+        }
+        if (header != null && !header.isEmpty()){
             Files.copy(header.getInputStream(), rootImg.resolve(grupo + "/" + header.getOriginalFilename()), REPLACE_EXISTING);
-        if (signature != null && !signature.isEmpty())
+            LOGGER.info("Subido imagen header:" + rootImg.resolve(grupo + "/" + header.getOriginalFilename()));
+        }
+        if (signature != null && !signature.isEmpty()) {
             Files.copy(signature.getInputStream(), rootImg.resolve(grupo + "/" + signature.getOriginalFilename()), REPLACE_EXISTING);
-        if (watermark != null && !watermark.isEmpty())
+            LOGGER.info("Subido imagen signature:"+rootImg.resolve(grupo + "/" + signature.getOriginalFilename()));
+        }
+        if (watermark != null && !watermark.isEmpty()) {
             Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
+            LOGGER.info("Subido imagen watermark:"+rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())));
+        }else{ // si no mandan la marca de agua, se borra la que existia
+            File watermarkExistente = new File(pathImg + grupo.toUpperCase());
+            if (watermarkExistente.exists()) {
+                File[] files = watermarkExistente.listFiles();
+                for (File file:files) {
+                    if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + ".")) {
+                        LOGGER.info("Borrado imagen watermark:"+file.getAbsolutePath());
+                        file.delete();
+
+                    }
+                }
+            }
+        }
         if (idPlantilla != null) {
             imDir = new File(pathImg + grupo + "/" + idPlantilla);
             if (!imDir.exists()) {
@@ -224,7 +250,14 @@ public class TemplateService extends PlantillaService {
                 Files.copy(signature.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + signature.getOriginalFilename()), REPLACE_EXISTING);
             if (watermark != null && !watermark.isEmpty())
                 Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
-
+                File watermarkExistente = new File(pathImg + grupo.toUpperCase()+"/" + idPlantilla);
+                if (watermarkExistente.exists()) {
+                    File[] files = watermarkExistente.listFiles();
+                    for (File file:files) {
+                        if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + "."))
+                            file.delete();
+                    }
+                }
         }
     }
 
@@ -233,12 +266,13 @@ public class TemplateService extends PlantillaService {
         final Path TEMP_DIRECTORY = Paths.get(pathImg);
 
         Path pathToBeDeleted = TEMP_DIRECTORY.resolve("tmp");
+        if (pathToBeDeleted!=null && pathToBeDeleted.toFile().exists()) {
 
-        Files.walk(pathToBeDeleted)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
-
+            Files.walk(pathToBeDeleted)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
         File templateTempFile = new File(pathTemplates + "/_recibo_" + grupo.toUpperCase() + ".html");
         if (templateTempFile.exists()) {
             templateTempFile.delete();

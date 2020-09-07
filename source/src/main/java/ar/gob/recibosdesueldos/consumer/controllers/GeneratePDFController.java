@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import ar.gob.recibosdesueldos.commons.dto.generic.RestErrorResponse;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestResponse;
@@ -18,10 +20,12 @@ import ar.gob.recibosdesueldos.commons.exception.CustomException;
 import ar.gob.recibosdesueldos.commons.exception.CustomServiceException;
 import ar.gob.recibosdesueldos.commons.model.Plantilla;
 import ar.gob.recibosdesueldos.commons.service.GrupoService;
+import ar.gob.recibosdesueldos.consumer.scheduler.ScheduledTasks;
 import ar.gob.recibosdesueldos.consumer.services.TemplateService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,15 +47,19 @@ import ar.gob.recibosdesueldos.consumer.pdf.GeneratePDF;
 import ar.gob.recibosdesueldos.consumer.services.GeneratePDFService;
 import ar.gob.recibosdesueldos.model.messaging.Recibo;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.HEAD})
 
 public class GeneratePDFController {
-    
-	@Autowired
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTasks.class);
+    private static final Logger log = LoggerFactory.getLogger("MyApplication");
+
+    @Autowired
     private GeneratePDFService generatePDFService;
 
 	@Autowired
@@ -79,9 +87,15 @@ public class GeneratePDFController {
 
     @Value("${app.out_dir_temp}")
     private String tempDir;
+    /*
+    *
+
+    */
+
 
     private FileUtils fileUtils;
-
+    @ApiOperation(value="GENERATE_RECIBO" ,notes = " ")
+    @PreAuthorize("hasPermission('','GENERATE_RECIBO')")
     @PostMapping(value = "/generate", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity<byte[]> generate(@RequestBody Recibo recibo) throws IOException, DocumentException {
@@ -89,14 +103,15 @@ public class GeneratePDFController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    @ApiOperation(value="GENERATE_TEMPLATE" ,notes = " ")
+    @PreAuthorize("hasPermission('','GENERATE_TEMPLATE')")
     @PostMapping(value = "/generateTemplate")
     public RestResponse<Plantilla> generateTemplate(@RequestParam("codigoGrupo") String codigoGrupo,
                                               @RequestParam("descripcionPlantilla") String descripcionPlantilla,
                                               @RequestParam("template") MultipartFile template,
                                               @RequestParam("header") MultipartFile header,
                                               @RequestParam("signature") MultipartFile signature,
-                                              @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
+                                              @RequestParam(value = "watermark",required = false) MultipartFile watermark) throws IOException, DocumentException, CustomException {
         Plantilla plantilla =templateService.generateTemplate(
                 codigoGrupo.toUpperCase(),
                 descripcionPlantilla,
@@ -107,38 +122,45 @@ public class GeneratePDFController {
 		);
         return new RestResponse<>(HttpStatus.OK,plantilla);
     }
-
+    @ApiOperation(value="BORRAR_CACHE_TEMPLATES" ,notes = " ")
+    @PreAuthorize("hasPermission('','BORRAR_CACHE_TEMPLATES')")
     @PostMapping(value = "/borrarCacheTemplates")
     public RestResponse<Boolean> borrarCacheTemplates(){
+        String response = "Borrando cache de templates" + new Date();
+        LOGGER.info(response);
         generatePDF.borrarCacheTemplates();
+
+
         return new RestResponse<>(HttpStatus.OK,true);
     }
+    @ApiOperation(value="ACTIVAR_TEMPLATE" ,notes = " ")
+    @PreAuthorize("hasPermission('','ACTIVAR_TEMPLATE')")
     @PostMapping(value = "/activarTemplate")
     public RestResponse<Plantilla> activarTemplate(@RequestParam("idPlantilla") long idPlantilla) throws CustomException {
         return new RestResponse<>(HttpStatus.OK,templateService.activarTemplate(idPlantilla));
     }
-
+    @ApiOperation(value="PREVISUALIZAR_PDF" ,notes = " ")
+    @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF')")
     @PostMapping(value = "/previsualizarPDF" )
-    //@ResponseStatus(value = HttpStatus.OK)
-  //  @PreAuthorize("hasRole('ROLE_ADMIN')")
-
     public ResponseEntity<?> previsualizarPDF(
                                             @RequestParam("codigoGrupo") String codigoGrupo,
                                             @RequestParam("maxDetalles") int maxDetalles,
                                             @RequestParam("template") MultipartFile template,
                                             @RequestParam("header") MultipartFile header,
                                             @RequestParam("signature") MultipartFile signature,
-                                            @RequestParam("watermark") MultipartFile watermark) throws IOException, DocumentException, CustomException {
+                                            @RequestParam(value = "watermark",required = false) MultipartFile watermark) throws IOException, DocumentException, CustomException {
 
 
 
 
         try {
+            templateService.borraTempTemplatesFiles(codigoGrupo);
             templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    	this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
+
+        this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
 
         String filePath = previewDir+"/8-20266221488-20266221488_2020null_0.pdf";
 
@@ -154,10 +176,10 @@ public class GeneratePDFController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(bFile);
     }
-    @PostMapping(value = "/previsualizarPDFByIdPlantilla" )
-    //@ResponseStatus(value = HttpStatus.OK)
-    //  @PreAuthorize("hasRole('ROLE_ADMIN')")
 
+    @ApiOperation(value="PREVISUALIZAR_PDF_BY_ID" ,notes = " ")
+    @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF_BY_ID')")
+    @PostMapping(value = "/previsualizarPDFByIdPlantilla" )
     public ResponseEntity<?> previsualizarPDFByIdPlantilla(
             @RequestParam("maxDetalles") int maxDetalles,
             @RequestParam("idPlantilla") long idPlantilla) throws IOException, DocumentException, CustomException {
@@ -184,6 +206,8 @@ public class GeneratePDFController {
                 .body(bFile);
     }
 
+    @ApiOperation(value="DESCARGAR_IMAGENES_BY_ID" ,notes = " ")
+    @PreAuthorize("hasPermission('','DESCARGAR_IMAGENES_BY_ID')")
     @PostMapping(value = "/dercargarImagenesByIdPlantilla" )
     public ResponseEntity<?> dercargarImagenesByIdPlantilla(
             @RequestParam("idPlantilla") long idPlantilla) throws  CustomServiceException {
@@ -199,6 +223,9 @@ public class GeneratePDFController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(bFile);
     }
+
+    @ApiOperation(value="DESCARGAR_TEMPLATES_BY_ID" ,notes = " ")
+    @PreAuthorize("hasPermission('','DESCARGAR_TEMPLATES_BY_ID')")
     @PostMapping(value = "/dercargarArchivosTemplateByIdPlantilla" )
     public ResponseEntity<?> dercargarArchivosTemplateByIdPlantilla(
             @RequestParam("idPlantilla") long idPlantilla) throws  CustomServiceException {
@@ -227,8 +254,8 @@ public class GeneratePDFController {
 //        return new ResponseEntity<>(new RestResponse<>(HttpStatus.OK, result), HttpStatus.OK);
 //
 //    }
-
-    @ApiOperation(value = "getAllPlantillasByGrupoId")
+    @ApiOperation(value="GET_ALL_PLANTILLAS_BY_GRUPOID" ,notes = " ")
+    @PreAuthorize("hasPermission('','GET_ALL_PLANTILLAS_BY_GRUPOID')")
     @GetMapping("/getAllPlantillasByGrupoId")
     //  @PreAuthorize("hasPermission('','BUSCAR_USURIO_FILTRO')")
     public ResponseEntity<RestResponse<List<PlantillaDto>>> getAllPlantillasByGrupoId(@RequestParam("idGrupo") long idGrupo) throws CustomException {
