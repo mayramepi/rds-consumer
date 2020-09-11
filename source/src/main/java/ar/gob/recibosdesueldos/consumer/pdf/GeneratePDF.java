@@ -62,16 +62,7 @@ public class GeneratePDF {
 
 
 
-	@Value("${app.marca.agua.gcba}")
-	private boolean marcaGcba;
-	@Value("${app.marca.agua.ivc}")
-	private boolean marcaIvc;
-    @Value("${app.marca.agua.pdc}")
-	private boolean marcaPdc;
-	@Value("${app.marca.agua.boberos}")
-	private boolean marcaBoberos;
-	@Value("${app.marca.agua.issp}")
-	private boolean marcaIssp;
+
 	@Autowired
     private TemplateEngine templateEngine;
 
