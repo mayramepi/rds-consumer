@@ -1,52 +1,52 @@
 # Configuracion 
 Configurar el archivo "application.properties" con las propiedades:<br>
 <strong>
-app.name=@project.artifactId@
-app.version=@project.version@
+app.name=@project.artifactId@<br>
+app.version=@project.version@<br>
 
-spring.profiles.active=@spring.profiles.active@
+spring.profiles.active=@spring.profiles.active@<br>
 
 spring.datasource.url=jdbc:oracle:thin:@DB_HOST/DB_SERVICE<br>
 spring.datasource.username=DB_USERNAME<br>
 spring.datasource.password=DB_PASSWORD<br>
 
-spring.artemis.mode=native
-spring.artemis.embedded.enabled=false
+spring.artemis.mode=native<br>
+spring.artemis.embedded.enabled=false<br>
 
-spring.artemis.host=${AMQ_HOST:localhost}
-spring.artemis.port=${AMQ_PORT:61616}
-spring.artemis.user=${AMQ_USER:admin}
-spring.artemis.password=${AMQ_PASSWORD:admin}
+spring.artemis.host=${AMQ_HOST:localhost}<br>
+spring.artemis.port=${AMQ_PORT:61616}<br>
+spring.artemis.user=${AMQ_USER:admin}<br>
+spring.artemis.password=${AMQ_PASSWORD:admin}<br>
 
-app.out_dir=${APP_OUT_DIR:/var/rds/}
-app.out_dir_temp=${APP_TEM_DIR:/tmp}
-app.preview_dir=${APP_PREV_DIR:/prev}
+app.out_dir=${APP_OUT_DIR:/var/rds/}<br>
+app.out_dir_temp=${APP_TEM_DIR:/tmp}<br>
+app.preview_dir=${APP_PREV_DIR:/prev}<br>
 
-resources.css=${APP_TEMPLATES_DIR:/var/rds-templates}/css/style.css
-resources.img=${APP_TEMPLATES_DIR:/var/rds-templates}/img/
-resources.templates=${APP_TEMPLATES_DIR:/var/rds-templates}/templates/
-
-
-app.jms_concurrency=${JMS_CONCURRENCY:5}
-
-chequeoBorradoTemplates=${CHEQUO_BORRADO_TEMPLATES:0 0/15 * * * ?}
+resources.css=${APP_TEMPLATES_DIR:/var/rds-templates}/css/style.css<br>
+resources.img=${APP_TEMPLATES_DIR:/var/rds-templates}/img/<br>
+resources.templates=${APP_TEMPLATES_DIR:/var/rds-templates}/templates/<br>
 
 
-spring.servlet.multipart.max-file-size=10000KB
-spring.servlet.multipart.max-request-size=10000KB
+app.jms_concurrency=${JMS_CONCURRENCY:5}<br>
 
-app.retur-error-api:${RETURN_ERROR_API:false}
+chequeoBorradoTemplates=${CHEQUO_BORRADO_TEMPLATES:0 0/15 * * * ?}<br>
 
 
-logging.level.root=${level.root:info}
-logging.level.org.springframework.data=trace
-logging.level.org.hibernate.SQL=trace
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace
+spring.servlet.multipart.max-file-size=10000KB<br>
+spring.servlet.multipart.max-request-size=10000KB<br>
 
-app.log.dir=${APP_LOG_DIR:-/var/rds/logs}
+app.retur-error-api:${RETURN_ERROR_API:false}<br>
 
-security.jwt.token.secret-key:core-secret-key
-custom.chequeo-seguridad=${seguridad.chequeo:true}
+
+logging.level.root=${level.root:info}<br>
+logging.level.org.springframework.data=trace<br>
+logging.level.org.hibernate.SQL=trace<br>
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace<br>
+
+app.log.dir=${APP_LOG_DIR:-/var/rds/logs}<br>
+
+security.jwt.token.secret-key:core-secret-key<br>
+custom.chequeo-seguridad=${seguridad.chequeo:true}<br>
 
 </strong>
 
@@ -79,62 +79,59 @@ Donde:
 <p>
 Asi deberia quedar el archivo una vez configurado:<br>
 <strong>
-app.name=@project.artifactId@
-app.version=@project.version@
+app.name=@project.artifactId@<br>
+app.version=@project.version@<br>
 
-spring.profiles.active=@spring.profiles.active@
-
-
-
-spring.datasource.url=jdbc:oracle:thin:@${DB_HOST:exadb.gcba.gob.ar}:${DB_PORT:1521}/${DB_SERVICE_NAME:dgisdv12.gcba.gob.ar}
-spring.datasource.username=${DB_USERNAME:reingenieriarecibos_dev}
-spring.datasource.password=${DB_PASSWORD:reing_2k19}
-
-spring.main.allow-bean-definition-overriding=true
-springfox.documentation.swagger.v2.path: /docs
+spring.profiles.active=@spring.profiles.active@<br>
 
 
-spring.artemis.mode=native
-spring.artemis.embedded.enabled=false
 
-spring.artemis.host=${AMQ_HOST:localhost}
-spring.artemis.port=${AMQ_PORT:61616}
-spring.artemis.user=${AMQ_USER:admin}
-spring.artemis.password=${AMQ_PASSWORD:admin}
+spring.datasource.url=jdbc:oracle:thin:@${DB_HOST:exadb.gcba.gob.ar}:${DB_PORT:1521}/${DB_SERVICE_NAME:dgisdv12.gcba.gob.ar}<br>
+spring.datasource.username=${DB_USERNAME:reingenieriarecibos_dev}<br>
+spring.datasource.password=${DB_PASSWORD:reing_2k19}<br>
 
-app.out_dir=${APP_OUT_DIR:/var/rds/}
-app.out_dir_temp=${APP_TEM_DIR:/tmp}
-app.preview_dir=${APP_PREV_DIR:/prev}
-
-resources.css=${APP_TEMPLATES_DIR:/var/rds-templates}/css/style.css
-resources.img=${APP_TEMPLATES_DIR:/var/rds-templates}/img/
-resources.templates=${APP_TEMPLATES_DIR:/var/rds-templates}/templates/
+spring.main.allow-bean-definition-overriding=true<br>
+springfox.documentation.swagger.v2.path: /docs<br>
 
 
-app.jms_concurrency=${JMS_CONCURRENCY:5}
+spring.artemis.mode=native<br>
+spring.artemis.embedded.enabled=false<br>
 
-chequeoBorradoTemplates=${CHEQUO_BORRADO_TEMPLATES:0 0/15 * * * ?}
+spring.artemis.host=${AMQ_HOST:localhost}<br>
+spring.artemis.port=${AMQ_PORT:61616}<br>
+spring.artemis.user=${AMQ_USER:admin}<br>
+spring.artemis.password=${AMQ_PASSWORD:admin}<br>
+
+app.out_dir=${APP_OUT_DIR:/var/rds/}<br>
+app.out_dir_temp=${APP_TEM_DIR:/tmp}<br>
+app.preview_dir=${APP_PREV_DIR:/prev}<br>
+
+resources.css=${APP_TEMPLATES_DIR:/var/rds-templates}/css/style.css<br>
+resources.img=${APP_TEMPLATES_DIR:/var/rds-templates}/img/<br>
+resources.templates=${APP_TEMPLATES_DIR:/var/rds-templates}/templates/<br>
 
 
-spring.servlet.multipart.max-file-size=10000KB
-spring.servlet.multipart.max-request-size=10000KB
+app.jms_concurrency=${JMS_CONCURRENCY:5}<br>
 
-app.retur-error-api:${RETURN_ERROR_API:false}
+chequeoBorradoTemplates=${CHEQUO_BORRADO_TEMPLATES:0 0/15 * * * ?}<br>
 
 
-# LOGGING
-#logging.file=logs/establecimientos.log
-# #logging.file=C:/logs/spring-boot-elk.log
-logging.level.root=${level.root:info}
-logging.level.org.springframework.data=trace
-logging.level.org.hibernate.SQL=trace
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace
+spring.servlet.multipart.max-file-size=10000KB<br>
+spring.servlet.multipart.max-request-size=10000KB<br>
 
-app.log.dir=${APP_LOG_DIR:-/var/rds/logs}
+app.retur-error-api:${RETURN_ERROR_API:false}<br>
 
-# JWT
-security.jwt.token.secret-key:core-secret-key
-custom.chequeo-seguridad=${seguridad.chequeo:true}
+
+
+logging.level.root=${level.root:info}<br>
+logging.level.org.springframework.data=trace<br>
+logging.level.org.hibernate.SQL=trace<br>
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace<br>
+
+app.log.dir=${APP_LOG_DIR:-/var/rds/logs}<br>
+
+security.jwt.token.secret-key:core-secret-key<br>
+custom.chequeo-seguridad=${seguridad.chequeo:true}<br>
 </strong>
 </p>
 
