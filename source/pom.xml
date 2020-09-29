@@ -5,7 +5,7 @@
 
     <groupId>ar.gob.recibosdesueldos</groupId>
     <artifactId>consumer</artifactId>
-    <version>00.00.02-RC1</version>
+    <version>00.00.03-RC1</version>
     <name>rds-consumer</name>
     <description>Consumer</description>
 
@@ -49,8 +49,8 @@
         <itext.version>5.5.13.1</itext.version>
         <swagger.version>2.9.2</swagger.version>
         <model.version>00.00.01-RC4</model.version>
-        <commons.version>00.00.02-RC1</commons.version>
-        <logging.version>00.00.02-RC1</logging.version>
+        <commons.version>00.00.03-RC1</commons.version>
+        <logging.version>00.00.03-RC1</logging.version>
     </properties>
 
 
