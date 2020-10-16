@@ -113,8 +113,9 @@ public class GeneratePDF {
         variables.put("comunicaciones", plantillaPDF.getRecibo().getComunicaciones());
         variables.put("detalles", plantillaPDF.getRecibo().getDetalles());
         variables.put("liquidoCobrarLetras", plantillaPDF.getRecibo().getLiquidoAcobrarLetras());
+		variables.put("rectifica", plantillaPDF.getRecibo().getRectifica());
 
-        List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
+		List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
         List<DetalleReciboForHtml> listaDescuentos = new ArrayList<DetalleReciboForHtml>();
 
         for (DetalleRecibo detalleRecibo : plantillaPDF.getRecibo().getDetalles()) {
@@ -216,8 +217,10 @@ public class GeneratePDF {
         variables.put("comunicaciones", recibo.getComunicaciones());
         variables.put("detalles", recibo.getDetalles());
         variables.put("liquidoCobrarLetras", recibo.getLiquidoAcobrarLetras());
+		variables.put("rectifica", recibo.getRectifica());
 
-        List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
+
+		List<DetalleReciboForHtml> listaHaberes = new ArrayList<DetalleReciboForHtml>();
         List<DetalleReciboForHtml> listaDescuentos = new ArrayList<DetalleReciboForHtml>();
 
         for (DetalleRecibo detalleRecibo : recibo.getDetalles()) {
@@ -351,6 +354,7 @@ public class GeneratePDF {
 
 		recibo.setLiquidoAcobrarLetras("Cuatrocientos sesenta mil seiscientos con setenta y ocho (centavos o centésimos)");
 
+		recibo.setRectifica(true);
 		return recibo;
     }
 
