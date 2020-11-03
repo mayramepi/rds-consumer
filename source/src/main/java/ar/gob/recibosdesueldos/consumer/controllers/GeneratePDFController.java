@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestErrorResponse;
 import ar.gob.recibosdesueldos.commons.dto.generic.RestResponse;
 import ar.gob.recibosdesueldos.commons.dto.request.GetAllPlantillasDto;
@@ -94,6 +94,7 @@ public class GeneratePDFController {
 
 
     private FileUtils fileUtils;
+
     @ApiOperation(value="GENERATE_RECIBO" ,notes = " ")
     @PreAuthorize("hasPermission('','GENERATE_RECIBO')")
     @PostMapping(value = "/generate", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -122,6 +123,7 @@ public class GeneratePDFController {
 		);
         return new RestResponse<>(HttpStatus.OK,plantilla);
     }
+
     @ApiOperation(value="BORRAR_CACHE_TEMPLATES" ,notes = " ")
     @PreAuthorize("hasPermission('','BORRAR_CACHE_TEMPLATES')")
     @PostMapping(value = "/borrarCacheTemplates")
@@ -139,6 +141,7 @@ public class GeneratePDFController {
     public RestResponse<Plantilla> activarTemplate(@RequestParam("idPlantilla") long idPlantilla) throws CustomException {
         return new RestResponse<>(HttpStatus.OK,templateService.activarTemplate(idPlantilla));
     }
+
     @ApiOperation(value="PREVISUALIZAR_PDF" ,notes = " ")
     @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF')")
     @PostMapping(value = "/previsualizarPDF" )
@@ -266,4 +269,44 @@ public class GeneratePDFController {
         return new ResponseEntity<>(new RestResponse<>(HttpStatus.OK, result), HttpStatus.OK);
 
     }
+    /***************prueba ********************/
+
+    @ApiOperation(value="ULPOADZIP" ,notes = " ")
+    @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF')")
+    @PostMapping(value = "/UploadZip" )
+    public ResponseEntity<?> previsualizarPDF(
+            @RequestParam("zipfile") MultipartFile zipfile
+               ) throws IOException, DocumentException, CustomException {
+
+
+
+
+        try {
+            templateService.borraTempTemplatesFiles(codigoGrupo);
+            templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    //    this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
+
+        String filePath = previewDir+"/archivo.zip";
+
+
+
+            jpaArchivo=new JpaRepository()
+        archivo = jpaArchivo.save(zipfile);
+//        byte[] bFile = Files.readAllBytes(Paths.get(filePath));
+//        templateService.borraTempTemplatesFiles(codigoGrupo);
+
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
+
+        return (ResponseEntity<byte[]>) ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(bFile);
+    }
+
 }
