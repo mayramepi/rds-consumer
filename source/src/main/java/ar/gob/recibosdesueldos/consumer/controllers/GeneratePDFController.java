@@ -290,21 +290,10 @@ public class GeneratePDFController {
     @ApiOperation(value="ULPOADZIP" ,notes = " ")
     @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF')")
     @PostMapping(value = "/UploadZip" )
-    public ResponseEntity<?> previsualizarPDF(
+    public ResponseEntity<?> uploadZip(
             @RequestParam("zipfile") MultipartFile zipfile
                ) throws IOException, DocumentException, CustomException {
 
-
-
-
-     //   try {
-        //    templateService.borraTempTemplatesFiles(codigoGrupo);
-        //    templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
-      //  } catch (IOException e) {
-         //   e.printStackTrace();
-      //  }
-
-    //    this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
 
         String filePath = previewDir+"/archivo.zip";
 
