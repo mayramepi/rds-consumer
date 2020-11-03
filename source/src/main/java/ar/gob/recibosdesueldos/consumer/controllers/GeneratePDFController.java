@@ -49,7 +49,7 @@ import ar.gob.recibosdesueldos.model.messaging.Recibo;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /****************/
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -63,7 +63,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
-
+import static java.nio.file.StandardCopyOption.*;
 /****************/
 import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
@@ -302,7 +302,7 @@ public class GeneratePDFController {
      //   Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
 
         Path copied = Paths.get("/tmp/"+zipfile.getOriginalFilename());
-        Files.copy(zipfile.getInputStream(), copied);
+        Files.copy(zipfile.getInputStream(), copied,REPLACE_EXISTING);
     //    Files.copy(zipfile.getInputStream(), this.root.resolve("/tmp/"+zipfile.getOriginalFilename()));
          //   jpaArchivo=new JpaRepository();
 
