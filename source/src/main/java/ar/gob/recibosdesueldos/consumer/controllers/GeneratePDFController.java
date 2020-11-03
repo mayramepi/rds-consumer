@@ -312,11 +312,7 @@ LOGGER.info("---------------------------");
         HttpHeaders headers = new HttpHeaders();
 //        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
 
-        return (ResponseEntity<byte[]>) ResponseEntity
-                .ok()
-                .headers(headers);
-                //.contentType(MediaType.APPLICATION_PDF);
-              //  .body(bFile);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
