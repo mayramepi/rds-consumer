@@ -290,13 +290,13 @@ public class GeneratePDFController {
     @ApiOperation(value="ULPOADZIP" ,notes = " ")
     @PreAuthorize("hasPermission('','PREVISUALIZAR_PDF')")
     @PostMapping(value = "/UploadZip" )
-    public ResponseEntity<?> uploadZip(
+    public ResponseEntity<RestResponse> uploadZip(
             @RequestParam("zipfile") MultipartFile zipfile
                ) throws IOException, DocumentException, CustomException {
 
-
+        HttpStatus httpStatus= HttpStatus.NO_CONTENT;
         String filePath = previewDir+"/archivo.zip";
-LOGGER.info("---------------------------");
+
     //    LOGGER.info("filePath",filePath);
     //    LOGGER.info("resolve",this.root.resolve(zipfile.getOriginalFilename()));
      //   Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
@@ -312,7 +312,7 @@ LOGGER.info("---------------------------");
         HttpHeaders headers = new HttpHeaders();
 //        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(httpStatus);
     }
 
 }
