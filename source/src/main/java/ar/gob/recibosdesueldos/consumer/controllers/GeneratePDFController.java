@@ -296,22 +296,9 @@ public class GeneratePDFController {
 
         HttpStatus httpStatus= HttpStatus.NO_CONTENT;
         String filePath = previewDir+"/archivo.zip";
-
-    //    LOGGER.info("filePath",filePath);
-    //    LOGGER.info("resolve",this.root.resolve(zipfile.getOriginalFilename()));
-     //   Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
-
-        Path copied = Paths.get("/tmp/"+zipfile.getOriginalFilename());
+        copied = Paths.get("/tmp/"+zipfile.getOriginalFilename());
         Files.copy(zipfile.getInputStream(), copied,REPLACE_EXISTING);
-    //    Files.copy(zipfile.getInputStream(), this.root.resolve("/tmp/"+zipfile.getOriginalFilename()));
-         //   jpaArchivo=new JpaRepository();
-
-//        byte[] bFile = Files.readAllBytes(Paths.get(filePath));
-//        templateService.borraTempTemplatesFiles(codigoGrupo);
-
         HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
-
         return new ResponseEntity<>(httpStatus);
     }
 
