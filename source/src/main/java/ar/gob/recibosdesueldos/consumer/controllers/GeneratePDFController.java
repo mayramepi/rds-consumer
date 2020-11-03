@@ -49,6 +49,22 @@ import ar.gob.recibosdesueldos.model.messaging.Recibo;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/****************/
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+/****************/
 import static net.logstash.logback.argument.StructuredArguments.keyValue;
 
 @RestController
@@ -58,7 +74,7 @@ import static net.logstash.logback.argument.StructuredArguments.keyValue;
 public class GeneratePDFController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final Logger log = LoggerFactory.getLogger("MyApplication");
-
+    private final Path root = Paths.get("uploads");
     @Autowired
     private GeneratePDFService generatePDFService;
 
@@ -281,32 +297,32 @@ public class GeneratePDFController {
 
 
 
-        try {
-            templateService.borraTempTemplatesFiles(codigoGrupo);
-            templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+     //   try {
+        //    templateService.borraTempTemplatesFiles(codigoGrupo);
+        //    templateService.uploadTempFilesTemplate(codigoGrupo,template,header,signature,watermark);
+      //  } catch (IOException e) {
+         //   e.printStackTrace();
+      //  }
 
     //    this.generatePDF.previsualizarPdf(codigoGrupo, tempDir, previewDir, imgDir+"tmp/", cssDir,maxDetalles);
 
         String filePath = previewDir+"/archivo.zip";
 
+        Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
 
+         //   jpaArchivo=new JpaRepository();
 
-            jpaArchivo=new JpaRepository()
-        archivo = jpaArchivo.save(zipfile);
 //        byte[] bFile = Files.readAllBytes(Paths.get(filePath));
 //        templateService.borraTempTemplatesFiles(codigoGrupo);
 
-//        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
 //        headers.add("Content-Disposition", "attachment; filename=" + codigoGrupo+".pdf");
 
         return (ResponseEntity<byte[]>) ResponseEntity
                 .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(bFile);
+                .headers(headers);
+                //.contentType(MediaType.APPLICATION_PDF);
+              //  .body(bFile);
     }
 
 }
