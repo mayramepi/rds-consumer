@@ -299,8 +299,8 @@ public class GeneratePDFController {
 LOGGER.info("---------------------------");
         LOGGER.info("filePath",filePath);
         LOGGER.info("resolve",this.root.resolve(zipfile.getOriginalFilename()));
-        Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
-
+    //    Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
+        Files.copy(zipfile.getInputStream(), this.root.resolve("/tmp/"+zipfile.getOriginalFilename()));
          //   jpaArchivo=new JpaRepository();
 
 //        byte[] bFile = Files.readAllBytes(Paths.get(filePath));
