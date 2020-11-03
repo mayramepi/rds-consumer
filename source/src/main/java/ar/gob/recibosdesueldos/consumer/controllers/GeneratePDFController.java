@@ -296,7 +296,9 @@ public class GeneratePDFController {
 
 
         String filePath = previewDir+"/archivo.zip";
-
+LOGGER.info("---------------------------");
+        LOGGER.info("filePath",filePath);
+        LOGGER.info("resolve",this.root.resolve(zipfile.getOriginalFilename()));
         Files.copy(zipfile.getInputStream(), this.root.resolve(zipfile.getOriginalFilename()));
 
          //   jpaArchivo=new JpaRepository();
