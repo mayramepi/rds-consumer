@@ -270,7 +270,6 @@ public class GeneratePDF {
 // 		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
 // 			ponerMarca=marcaIssp;
 // 		}
-
         String cuil = recibo.getCuit().replace("-", "").trim();
 
         variables.put("listaHaberes", listaHaberes);
