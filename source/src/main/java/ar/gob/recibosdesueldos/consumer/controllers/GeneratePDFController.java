@@ -56,7 +56,6 @@ import static net.logstash.logback.argument.StructuredArguments.keyValue;
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.HEAD})
 
 
-
 public class GeneratePDFController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final Logger log = LoggerFactory.getLogger("MyApplication");
