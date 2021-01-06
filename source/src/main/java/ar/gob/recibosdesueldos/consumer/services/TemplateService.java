@@ -222,6 +222,8 @@ public class TemplateService extends PlantillaService {
             LOGGER.info("Subido imagen signature:"+rootImg.resolve(grupo + "/" + signature.getOriginalFilename()));
         }
         if (watermark != null && !watermark.isEmpty()) {
+            LOGGER.info("Contenido marca de agua:"+watermark.toString());
+
             Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
             LOGGER.info("Subido imagen watermark:"+rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())));
         }else{ // si no mandan la marca de agua, se borra la que existia
