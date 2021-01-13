@@ -143,6 +143,7 @@ public class GeneratePDF {
         	}
 
 		}
+		ponerMarca=false;
 		File watermarkExistente = new File(pathImg + codigoGrupo.toUpperCase());
 		if (watermarkExistente.exists()) {
 			File[] files = watermarkExistente.listFiles();
@@ -249,7 +250,7 @@ public class GeneratePDF {
          	}
 
  		}
-
+		ponerMarca=false;
 		File watermarkExistente = new File(pathImg1 + codigoGrupo.toUpperCase());
 		if (watermarkExistente.exists()) {
 			File[] files = watermarkExistente.listFiles();
