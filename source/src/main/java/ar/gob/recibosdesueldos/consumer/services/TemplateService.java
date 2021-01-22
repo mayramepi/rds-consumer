@@ -222,6 +222,8 @@ public class TemplateService extends PlantillaService {
             LOGGER.info("Subido imagen signature:"+rootImg.resolve(grupo + "/" + signature.getOriginalFilename()));
         }
         if (watermark != null && !watermark.isEmpty()) {
+            LOGGER.info("Contenido marca de agua:"+watermark.toString());
+
             Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
             LOGGER.info("Subido imagen watermark:"+rootImg.resolve(grupo + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())));
         }else{ // si no mandan la marca de agua, se borra la que existia
@@ -250,14 +252,14 @@ public class TemplateService extends PlantillaService {
                 Files.copy(signature.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + signature.getOriginalFilename()), REPLACE_EXISTING);
             if (watermark != null && !watermark.isEmpty())
                 Files.copy(watermark.getInputStream(), rootImg.resolve(grupo + "/" + idPlantilla + "/" + "marca_agua_" + grupo.toUpperCase() + "." + FilenameUtils.getExtension(watermark.getOriginalFilename())), REPLACE_EXISTING);
-                File watermarkExistente = new File(pathImg + grupo.toUpperCase()+"/" + idPlantilla);
-                if (watermarkExistente.exists()) {
-                    File[] files = watermarkExistente.listFiles();
-                    for (File file:files) {
-                        if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + "."))
-                            file.delete();
-                    }
-                }
+   //             File watermarkExistente = new File(pathImg + grupo.toUpperCase() + "/" + idPlantilla);
+//             if (watermarkExistente.exists()) {
+//                    File[] files = watermarkExistente.listFiles();
+//                    for (File file:files) {
+//                        if(!file.isDirectory() && file.getName().startsWith("marca_agua_" + grupo.toUpperCase() + "."))
+//                            file.delete();
+//                    }
+//                }
         }
     }
 

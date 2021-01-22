@@ -143,6 +143,7 @@ public class GeneratePDF {
         	}
 
 		}
+		ponerMarca=false;
 		File watermarkExistente = new File(pathImg + codigoGrupo.toUpperCase());
 		if (watermarkExistente.exists()) {
 			File[] files = watermarkExistente.listFiles();
@@ -249,7 +250,7 @@ public class GeneratePDF {
          	}
 
  		}
-
+		ponerMarca=false;
 		File watermarkExistente = new File(pathImg1 + codigoGrupo.toUpperCase());
 		if (watermarkExistente.exists()) {
 			File[] files = watermarkExistente.listFiles();
@@ -270,7 +271,6 @@ public class GeneratePDF {
 // 		}else if(Constantes.ISSP.equalsIgnoreCase(codigoGrupo)){
 // 			ponerMarca=marcaIssp;
 // 		}
-
         String cuil = recibo.getCuit().replace("-", "").trim();
 
         variables.put("listaHaberes", listaHaberes);
