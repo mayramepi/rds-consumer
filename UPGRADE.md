@@ -71,7 +71,7 @@ Donde:
     <li>RETURN_ERROR_API: Si esta en true, las apis retornan el error interno cuando este se genera.</li>
     <li>APP_LOG_DIR: Directorio donde se escriben los logs en formato json para ser tomados por el agentTD para luego subirlo al elasticsearch</li>
     <li>seguridad.cheque: Si esta en false, el sistema ya no requiere que se le mante el tocken de seguridad.</li>
-    
+    <li>app.jms_queue: Aca se define el nombre de la cola .Configurar  segun  el ambiente.</li>
 
 </ul>
 </p>
