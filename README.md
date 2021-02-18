@@ -1,6 +1,11 @@
 # Configuracion 
 Configurar el archivo "application.properties" con las propiedades:<br>
 <p>
+app.name=@project.artifactId@<br>
+app.version=@project.version@<br>
+
+spring.profiles.active=@spring.profiles.active@<br>
+
 Donde:
 <ul>
     <li>DB_HOST: host de la base de datos Oracle</li>
