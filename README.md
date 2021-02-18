@@ -6,6 +6,23 @@ app.version=@project.version@<br>
 
 spring.profiles.active=@spring.profiles.active@<br>
 
+spring.main.allow-bean-definition-overriding=true<br>
+springfox.documentation.swagger.v2.path: /docs<br>
+
+
+spring.artemis.mode=native<br>
+spring.artemis.embedded.enabled=false<br>
+
+
+spring.servlet.multipart.max-file-size=10000KB<br>
+spring.servlet.multipart.max-request-size=10000KB<br>
+
+logging.level.root=${level.root:info}<br>
+logging.level.org.springframework.data=trace<br>
+logging.level.org.hibernate.SQL=trace<br>
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=trace<br>
+
+
 Donde:
 <ul>
     <li>DB_HOST: host de la base de datos Oracle</li>
@@ -26,8 +43,6 @@ Donde:
     <li>RETURN_ERROR_API: Si esta en true, las apis retornan el error interno cuando este se genera.</li>
     <li>APP_LOG_DIR: Directorio donde se escriben los logs en formato json para ser tomados por el agentTD para luego subirlo al elasticsearch</li>
     <li>seguridad.chequeo: Si esta en false, el sistema ya no requiere que se le mante el tocken de seguridad.</li>
- 
-    
     <li>app.jms_queue: Aca se define el nombre de la cola .Configurar  segun  el ambiente.</li>
     
 </ul>
