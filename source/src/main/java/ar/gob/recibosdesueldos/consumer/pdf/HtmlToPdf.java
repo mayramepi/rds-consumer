@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
 
@@ -111,7 +112,7 @@ public class HtmlToPdf {
 			if(ponerMarca) {
 				ponerMarcaAgua(variables, dirTemp, pdfTemporalFile, codigoGrupo, dirFinal, pathImg);
 			}else {
-				Files.move(Paths.get(pdfTemporalFile.toURI()), Paths.get(dirFinal + variables.get("pdfName") + ".pdf"));
+				Files.move(Paths.get(pdfTemporalFile.toURI()), Paths.get(dirFinal + variables.get("pdfName") + ".pdf"), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 		} catch (IOException e1) {
