@@ -1,22 +1,7 @@
-server.port: 8085
+app.name=@project.artifactId@
+app.version=@project.version@
 
-spring.artemis.mode=embedded
-
-spring.artemis.embedded.enabled=true
-spring.artemis.embedded.persistent=false
-
-app.out_dir=c:\\pdf\\
-app.out_dir_temp=c:\\pdf\\
-app.preview_dir=c:\\pdf\\preview\\
-app.marca.agua.gcba=true
-app.marca.agua.ivc=true
-app.marca.agua.pdc=true
-app.marca.agua.boberos=true
-app.marca.agua.issp=true
-
-resources.css=c:\\resources\\css\\style.css
-resources.img=c:\\resources\\img\\
-resources.templates=c:\\resources\\templates\\
+spring.profiles.active=@spring.profiles.active@
 
 
 

@@ -37,7 +37,7 @@ public class Consumer {
 
     private ReciboMapper mapper = Mappers.getMapper(ReciboMapper.class);
 
-    @JmsListener(destination = "lotes.queue", concurrency = "${app.jms_concurrency}")
+    @JmsListener(destination = "${app.jms_queue}", concurrency = "${app.jms_concurrency}")
     public void consume(Recibo recibo) {
         ar.gob.recibosdesueldos.model.recibos.Recibo newRecibo = mapper.sourceToDestination(recibo);
         MDC.put("idLote", newRecibo.getIdLote());
