@@ -70,7 +70,7 @@ public class Consumer {
             logger.error(">> Error: {}",stacktrace);
            // logger.info("Actualizando el estado del reciboSial a: 'NOK'");
             this.consumerService.updateEstadoReciboSial(newRecibo.getIdReciboSial(), newRecibo.getIdLote(), "NOK");
-		} finally {
+        } finally {
             MDC.remove("idRecibo");
             MDC.remove("idLote");
             if (file != null) {
