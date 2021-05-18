@@ -77,7 +77,7 @@ public class GeneratePDF {
 
 	}
 
-    public void createPDF(PlantillaPDF plantillaPDF,String dirTemp,String dirFinal) throws IOException, DocumentException {
+    public Path createPDF(PlantillaPDF plantillaPDF,String dirTemp,String dirFinal) throws IOException, DocumentException {
         Map<String, Object> variables = new HashMap<>();
         String codigoGrupo = plantillaPDF.getRecibo().getCodigoGrupo();
 		String htmlTemplateName = "recibo_" + codigoGrupo;
@@ -178,7 +178,7 @@ public class GeneratePDF {
 
         HtmlToPdf pdfFinal = new HtmlToPdf();
 
-        pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"/");
+        return pdfFinal.parseoHtmlPdf(templateEngine, variables, resourceLoader, htmlTemplateName, dirTemp, dirFinal, ponerMarca, pathCss, pathImg+codigoGrupo.toUpperCase()+"/");
     }
 
     public void previsualizarPdf(String codigoGrupo,String dirTemp,String dirFinal,String pathImg1,String pathCss1,int maxDetalles) throws IOException, DocumentException {

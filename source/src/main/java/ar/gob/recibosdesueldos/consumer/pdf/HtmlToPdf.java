@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
@@ -46,9 +47,9 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 @Component
 public class HtmlToPdf {
 
-	public void parseoHtmlPdf(TemplateEngine templateEngine, Map<String, Object> variables,
-			ResourceLoader resourceLoader, String htmlTemplateName, String dirTemp, String dirFinal, boolean ponerMarca,
-			String pathCss, String pathImg) throws IOException, DocumentException {
+	public Path parseoHtmlPdf(TemplateEngine templateEngine, Map<String, Object> variables,
+							  ResourceLoader resourceLoader, String htmlTemplateName, String dirTemp, String dirFinal, boolean ponerMarca,
+							  String pathCss, String pathImg) throws IOException, DocumentException {
 
 		try {
 			dirTemp=dirTemp+"/";
@@ -110,9 +111,10 @@ public class HtmlToPdf {
 
 			document.close();
 			if(ponerMarca) {
-				ponerMarcaAgua(variables, dirTemp, pdfTemporalFile, codigoGrupo, dirFinal, pathImg);
+				return ponerMarcaAgua(variables, dirTemp, pdfTemporalFile, codigoGrupo, dirFinal, pathImg);
 			}else {
 				Files.move(Paths.get(pdfTemporalFile.toURI()), Paths.get(dirFinal + variables.get("pdfName") + ".pdf"), StandardCopyOption.REPLACE_EXISTING);
+				return Paths.get(dirFinal + variables.get("pdfName") + ".pdf");
 			}
 
 		} catch (IOException e1) {
@@ -125,7 +127,7 @@ public class HtmlToPdf {
 
 	}
 
-	private void ponerMarcaAgua(Map<String, Object> variables, String dirTemp, File pdfTemporalFile,String codigoGrupo, String dirFinal,
+	private Path ponerMarcaAgua(Map<String, Object> variables, String dirTemp, File pdfTemporalFile,String codigoGrupo, String dirFinal,
 			String pathImg)
 			throws IOException, DocumentException, FileNotFoundException, BadElementException, MalformedURLException {
 
@@ -151,7 +153,7 @@ public class HtmlToPdf {
 		pdfStamper.close();
 		reader.close();
 		this.removeTemporal(dirTemp +(String) variables.get("pdfName") + "temp.pdf");
-
+		return Paths.get(pdfFinalPath);
 
 	}
 
